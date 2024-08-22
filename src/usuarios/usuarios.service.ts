@@ -28,8 +28,10 @@ export class UsuariosService {
     async createOne(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
         //buscar el autor por id
         const usuario = this.usuarioRepository.create(createUsuarioDto);
-        return this.usuarioRepository.save(usuario);
+        return this.usuarioRepository.save(usuario); 
+        //Este método guarda la instancia creada en la base de datos. Si el guardado es exitoso, devuelve la entidad guardada.
     }
+
     async updanteOne(id: number, updateUsuarioDto: UpdateUsuarioDto) {
         return await this.usuarioRepository.update(Number(id), updateUsuarioDto)
     }
