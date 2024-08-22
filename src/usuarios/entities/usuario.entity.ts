@@ -23,5 +23,5 @@ export class Usuario {
     // Define la columna 'contraseña' como una cadena de texto 
     @Column()
     contraseña: string
-}
 
+}
