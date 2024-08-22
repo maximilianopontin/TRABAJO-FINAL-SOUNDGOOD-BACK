@@ -5,7 +5,7 @@ import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(private readonly usuariosService: UsuariosService) { }
 
   @Get()
   findAll() {
@@ -13,25 +13,31 @@ export class UsuariosController {
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseIntPipe ({ errorHttpStatusCode: 
-  HttpStatus.NOT_ACCEPTABLE})
-) 
-id: number,) {
+  findOne(@Param('id', new ParseIntPipe({
+    errorHttpStatusCode:
+      HttpStatus.NOT_ACCEPTABLE
+  })
+  )
+  id: number,) {
     return this.usuariosService.findOneUser(+id);
   }
-  
+
   @Post()
   create(@Body() createUsuarioDto: CreateUsuarioDto) {
     return this.usuariosService.createOne(createUsuarioDto);
   }
- 
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
     return this.usuariosService.updanteOne(+id, updateUsuarioDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usuariosService.deleteOne(+id);
+  delete(@Param('id', new ParseIntPipe({
+    errorHttpStatusCode:
+      HttpStatus.NOT_ACCEPTABLE
+  })
+  ) id: number) {
+    return this.usuariosService.deleteOneUser(+id);
   }
 }

@@ -1,3 +1,4 @@
+
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 // El decorador @Entity indica que esta clase representa una entidad en la base de datos
@@ -22,4 +23,5 @@ export class Usuario {
     // Define la columna 'contraseña' como una cadena de texto 
     @Column()
     contraseña: string
+
 }

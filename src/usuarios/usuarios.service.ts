@@ -17,6 +17,7 @@ export class UsuariosService {
         return await this.usuarioRepository.find();
     }
 
+
     async findOneUser(@Param('id') userId: number): Promise<Usuario> {
         const user = await this.usuarioRepository.findOne({
             where: { id: userId }
@@ -26,7 +27,7 @@ export class UsuariosService {
     }
 
     async createOne(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
-        //buscar el autor por id
+
         const usuario = this.usuarioRepository.create(createUsuarioDto);
         return this.usuarioRepository.save(usuario); 
         //Este método guarda la instancia creada en la base de datos. Si el guardado es exitoso, devuelve la entidad guardada.
@@ -35,7 +36,16 @@ export class UsuariosService {
     async updanteOne(id: number, updateUsuarioDto: UpdateUsuarioDto) {
         return await this.usuarioRepository.update(Number(id), updateUsuarioDto)
     }
-    async deleteOne(id: number) {
-        return this.usuarioRepository.delete(id)
+
+    async deleteOneUser(@Param('id') userId: number): Promise<any> {
+        // busca el usuario por su ID
+        const user = await this.usuarioRepository.findOne({
+            where: { id: userId }
+        });
+        if (!user) throw new NotFoundException(`EL usuario con id ${userId} no existe.`)
+        //si el usuario existe, lo eliminamos 
+        await this.usuarioRepository.delete(userId);
+        //devuelve un msj con el nombre del usuario eliminado
+        return { message: `Usuario ${user.nombre} ha sido eliminado` };
     }
 }
