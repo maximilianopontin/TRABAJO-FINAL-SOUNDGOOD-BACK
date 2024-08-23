@@ -11,7 +11,7 @@ export class UsuariosService {
         private usuarioRepository: Repository<Usuario>
     ) { }
 
-    async findAll(): Promise<Usuario[]> {
+    async findAllUsers(): Promise<Usuario[]> {
         const usuario = await this.usuarioRepository.find();
         if (!usuario.length) throw new NotFoundException("no usuario in database");
         return await this.usuarioRepository.find();
@@ -26,13 +26,21 @@ export class UsuariosService {
         return user;
     }
 
-    async createOne(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
+    async createOneUser(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
 
         const usuario = this.usuarioRepository.create(createUsuarioDto);
         return this.usuarioRepository.save(usuario);
     }
-    async updanteOne(id: number, updateUsuarioDto: UpdateUsuarioDto) {
-        return await this.usuarioRepository.update(Number(id), updateUsuarioDto)
+
+    async updateOneUser(@Param('id') userId: number, updateUsuarioDto: UpdateUsuarioDto): Promise<any> {
+        const newUsuario = await this.usuarioRepository.preload({
+            //busca un usuario existente basado en el ID. Si no lo encuentra, lanzamos una excepción NotFoundException
+            id: userId,
+            ...updateUsuarioDto
+        });
+        if (!userId) throw new NotFoundException(`EL usuario con id ${userId} no existe.`)
+       
+        return this.usuarioRepository.save(newUsuario) //guarda el usuario actualizado
     }
 
     async deleteOneUser(@Param('id') userId: number): Promise<any> {
