@@ -24,4 +24,6 @@ export class Usuario {
     @Column()
     contraseña: string
 
+    //relacion con favoritos
+    //relaciones con playlist
 }
