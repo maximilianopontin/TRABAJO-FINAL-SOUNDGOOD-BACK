@@ -15,8 +15,8 @@ export class Canciones {
     titulo: string;
 
     // Define la columna 'año de lanzamiento' como una fecha
-    @Column('date')
-    añoLanzamiento: Date;
+    @Column()
+    añoLanzamiento: number;
 
     // Define la columna 'duracion' como un number 
     @Column()
