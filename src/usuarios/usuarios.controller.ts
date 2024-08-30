@@ -9,7 +9,7 @@ export class UsuariosController {
 
   @Get()
   findAll() {
-    return this.usuariosService.findAll();
+    return this.usuariosService.findAllUsers();
   }
 
   @Get(':id')
@@ -24,12 +24,16 @@ export class UsuariosController {
 
   @Post()
   create(@Body() createUsuarioDto: CreateUsuarioDto) {
-    return this.usuariosService.createOne(createUsuarioDto);
+    return this.usuariosService.createOneUser(createUsuarioDto);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuariosService.updanteOne(+id, updateUsuarioDto);
+  update(@Param('id', new ParseIntPipe({
+    errorHttpStatusCode:
+      HttpStatus.NOT_ACCEPTABLE
+  })) id: number,
+    @Body() updateUsuarioDto: UpdateUsuarioDto) {
+    return this.usuariosService.updateOneUser(id, updateUsuarioDto);
   }
 
   @Delete(':id')

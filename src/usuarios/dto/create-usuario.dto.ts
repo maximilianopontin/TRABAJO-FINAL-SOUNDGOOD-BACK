@@ -10,7 +10,7 @@ export class CreateUsuarioDto {
     @IsNotEmpty()
     @IsDate()
     @Type(() => Date) // Transforma el valor a un objeto Date
-    fechaNacieminto: Date;
+    fechaNacimiento: Date;
 
     @IsNotEmpty()
     @IsEmail()
