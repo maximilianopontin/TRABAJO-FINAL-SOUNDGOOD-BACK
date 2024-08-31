@@ -1,10 +1,10 @@
-
-
-import { Entity, Column, PrimaryGeneratedColumn, JoinTable, ManyToOne, OneToMany, ManyToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { Artistas } from 'src/artistas/entities/artista.entity';
-// El decorador @Entity indica que esta clase representa una entidad en la base de datos
-@Entity("canciones")
+import { Genero } from 'src/generos/entities/genero.entity';
 
+// El decorador @Entity indica que esta clase representa una entidad en la base de datos
+
+@Entity("canciones")
 export class Canciones {
   // Define la columna 'id' como la clave primaria generada automáticamente
   @PrimaryGeneratedColumn()
@@ -26,14 +26,17 @@ export class Canciones {
   filename: string;
 
   //relacion uno a muchos, recibe un callback que toma la entidad canciones con la que se va a relacionar, le pone nombre. en el segundo callback toma la entidad artista que es la actual. devuelve arreglo de canciones
-
-  @ManyToMany(() => Artistas, artista => artista.cancion)
+  @ManyToMany(() => Artistas, artista => artista.canciones)
   @JoinTable({
     name: 'cancion_artista', // Nombre de la tabla intermedia
     joinColumn: { name: 'cancionId', referencedColumnName: 'cancionId' },
     inverseJoinColumn: { name: 'artistaId', referencedColumnName: 'artistaId' },
   })
-  artista: Artistas[];
+  artistas: Artistas[];
+
+  @ManyToOne(() => Genero, genero => genero.canciones)
+      genero: Genero;
+
 
 
   /*
@@ -49,11 +52,6 @@ export class Canciones {
         // Define la columna 'playlist' como una cadena de texto
       @Column()
       playlist: ;
-
-     
-  
-      @OneToMany(() => Genero, genero => genero.cancion)
-      generos: Genero;
       
       */
 

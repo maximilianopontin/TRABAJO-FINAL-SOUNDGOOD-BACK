@@ -4,8 +4,6 @@ import { UpdateCancionesDto } from './dto/update-canciones.dto';
 import { Repository} from 'typeorm';
 import { Canciones } from './entities/cancion.entity';
 
- 
-
 @Injectable()
 export class CancionesService {
   constructor(
@@ -20,7 +18,9 @@ export class CancionesService {
   }
 
   async findAllSongs(): Promise <Canciones[]> {
-    const cancion = await this.cancionRepository.find();
+    const cancion = await this.cancionRepository.find({
+      relations: ['artistas', 'genero'], //carga las relaciones de artista y genero
+    });
     if (!cancion.length) throw new NotFoundException("no se encontraron canciones");
         return await this.cancionRepository.find();
   }

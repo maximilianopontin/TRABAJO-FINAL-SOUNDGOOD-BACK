@@ -1,5 +1,4 @@
 import { IsString, Length, IsNotEmpty, Min, Max, IsInt, IsNumber, IsNumberString } from "class-validator";
-import { Type } from 'class-transformer';
 
 export class CreateCancionesDto {
   @IsNotEmpty()
@@ -21,13 +20,13 @@ export class CreateCancionesDto {
   @IsString()
   filename: string;
 
-  // @IsNotEmpty()
-  // @IsNumber()
-  //generoId: number;
+  
+  @IsNumber()
+  generoId: number;
 
-  @IsNotEmpty()
+  
   @IsNumberString()
-  artistaId: number;
+  artistaId: number[];
 
 
 }
