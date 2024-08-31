@@ -1,4 +1,4 @@
-import { IsString, IsDate, Length, IsNotEmpty, Min, Max, IsInt, IsNumber } from "class-validator";
+import { IsString, Length, IsNotEmpty, Min, Max, IsInt, IsNumber, IsNumberString } from "class-validator";
 import { Type } from 'class-transformer';
 
 export class CreateCancionesDto {
@@ -25,9 +25,9 @@ export class CreateCancionesDto {
   // @IsNumber()
   //generoId: number;
 
-  //  @IsNotEmpty()
-  // @IsNumber()
-  //artistaId: number;
+  @IsNotEmpty()
+  @IsNumberString()
+  artistaId: number;
 
 
 }
