@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { CreateArtistaDto } from './dto/create-artista.dto';
 import { UpdateArtistaDto } from './dto/update-artista.dto';
 import { Artistas } from './entities/artista.entity';
@@ -16,8 +16,10 @@ export class ArtistasService {
     return this.artistaRepository.save(artista);
   }
 
-  findAll() {
-    return `This action returns all artistas`;
+  async findAllArtist(): Promise <Artistas[]> {
+    const artist = await this.artistaRepository.find()
+    if (!artist.length) throw new NotFoundException('No se encontraron artistas');
+    return await this.artistaRepository.find();
   }
 
   findOne(id: number) {

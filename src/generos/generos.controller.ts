@@ -14,7 +14,7 @@ export class GenerosController {
 
   @Get()
   findAll() {
-    return this.generosService.findAll();
+    return this.generosService.findAllGenero();
   }
 
   @Get(':id')

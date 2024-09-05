@@ -20,11 +20,11 @@ export class CreateCancionesDto {
   @IsString()
   filename: string;
 
-  
+  @IsNotEmpty()
   @IsNumber()
   generoId: number;
 
-  
+  @IsNotEmpty()
   @IsNumberString()
   artistaId: number[];
 

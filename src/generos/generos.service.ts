@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateGeneroDto } from './dto/create-genero.dto';
 import { UpdateGeneroDto } from './dto/update-genero.dto';
 import { Repository } from 'typeorm';
@@ -16,8 +16,10 @@ export class GenerosService {
     return this.generoRepository.save(genero);
   }
 
-  findAll() {
-    return `This action returns all generos`;
+   async findAllGenero(): Promise <Genero[]> {
+    const genero = await this.generoRepository.find();
+    if (!genero.length) throw new NotFoundException('no se encontraron generos');
+    return await this.generoRepository.find(); 
   }
 
   findOne(id: number) {
