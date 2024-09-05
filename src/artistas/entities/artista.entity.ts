@@ -1,6 +1,6 @@
 import { Canciones } from 'src/canciones/entities/cancion.entity';
 
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany,} from 'typeorm';
 
 @Entity ("artistas")
 

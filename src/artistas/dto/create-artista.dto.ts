@@ -1,11 +1,8 @@
-import { IsString, IsNumberString, Length, IsNotEmpty, Min, Max, IsInt, IsNumber, isNumberString } from "class-validator";
+import { IsString, Length, IsNotEmpty, } from "class-validator";
 
 export class CreateArtistaDto {
-
     @IsNotEmpty()
     @IsString()
     @Length(3, 20)
-    nombre: string;
-
-  
+    nombre: string;  
 }

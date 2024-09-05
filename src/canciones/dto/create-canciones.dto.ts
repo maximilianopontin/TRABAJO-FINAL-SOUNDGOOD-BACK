@@ -1,4 +1,4 @@
-import { IsString, Length, IsNotEmpty, Min, Max, IsInt, IsNumber, IsNumberString } from "class-validator";
+import { IsString, Length, IsNotEmpty, Min, Max, IsInt, IsNumber, IsNumberString, IsArray } from "class-validator";
 
 export class CreateCancionesDto {
   @IsNotEmpty()
@@ -25,7 +25,8 @@ export class CreateCancionesDto {
   generoId: number;
 
   @IsNotEmpty()
-  @IsNumberString()
+  @IsArray()
+  @IsNumber({}, { each: true })
   artistaId: number[];
 
 
