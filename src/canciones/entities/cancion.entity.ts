@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { Artistas } from 'src/artistas/entities/artista.entity';
 import { Genero } from 'src/generos/entities/genero.entity';
+import { Favoritos } from 'src/favoritos/entities/favorito.entity';
 
 // El decorador @Entity indica que esta clase representa una entidad en la base de datos
 
@@ -36,6 +37,9 @@ export class Canciones {
 
   @ManyToOne(() => Genero, genero => genero.canciones)
       genero: Genero;
+
+  @ManyToMany(()=> Favoritos, favorito => favorito.canciones)
+  favoritos: Favoritos[]
 
 
 

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { usuarioProviders } from './usuario.provider';
+import { usuarioProviders } from './usuario.providers';
 import { DatabaseModule } from 'src/database/database.module';
 import { UsuariosService } from './usuarios.service';
 import { UsuariosController } from './usuarios.controller';

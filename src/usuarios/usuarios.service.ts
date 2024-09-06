@@ -20,7 +20,7 @@ export class UsuariosService {
 
     async findOneUser(@Param('id') userId: number): Promise<Usuario> {
         const user = await this.usuarioRepository.findOne({
-            where: { id: userId }
+            where: { usuarioId: userId }
         }); //para buscar un usuario con un ID específico. Esto asegura que se busque el usuario correcto en función del parámetro userId.
         if (!user) throw new NotFoundException(`EL usuario con id ${userId} no existe.`)
         return user;
@@ -36,7 +36,7 @@ export class UsuariosService {
     async updateOneUser(@Param('id') userId: number, updateUsuarioDto: UpdateUsuarioDto): Promise<any> {
         const newUsuario = await this.usuarioRepository.preload({
             //busca un usuario existente basado en el ID. Si no lo encuentra, lanzamos una excepción NotFoundException
-            id: userId,
+            usuarioId: userId,
             ...updateUsuarioDto
         });
         if (!userId) throw new NotFoundException(`EL usuario con id ${userId} no existe.`)
@@ -47,7 +47,7 @@ export class UsuariosService {
     async deleteOneUser(@Param('id') userId: number): Promise<any> {
         // busca el usuario por su ID
         const user = await this.usuarioRepository.findOne({
-            where: { id: userId }
+            where: { usuarioId: userId }
         });
         if (!user) throw new NotFoundException(`EL usuario con id ${userId} no existe.`)
         //si el usuario existe, lo eliminamos 

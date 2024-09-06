@@ -1,12 +1,13 @@
 
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Favoritos } from 'src/favoritos/entities/favorito.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
 
 // El decorador @Entity indica que esta clase representa una entidad en la base de datos
 @Entity()
 export class Usuario {
     // Define la columna 'id' como la clave primaria generada automáticamente
     @PrimaryGeneratedColumn()
-    id: number;
+    usuarioId: number;
  
     // Define la columna 'name' con una longitud máxima de 500 caracteres
     @Column({ length: 20})
@@ -25,5 +26,8 @@ export class Usuario {
     contraseña: string
 
     //relacion con favoritos
+    @ManyToMany(() => Favoritos, favorito => favorito.usuarios)
+    favoritos : Favoritos[]
+    
     //relaciones con playlist
 }
