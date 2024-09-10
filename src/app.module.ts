@@ -6,9 +6,10 @@ import { CancionesModule } from './canciones/cancion.module';
 import { ArtistasModule } from './artistas/artistas.module';
 import { GenerosModule } from './generos/generos.module';
 import { FavoritosModule } from './favoritos/favoritos.module';
+import { PlaylistsModule } from './playlists/playlists.module';
 
 @Module({
-  imports: [UsuariosModule, CancionesModule, ArtistasModule, GenerosModule, FavoritosModule],
+  imports: [UsuariosModule, CancionesModule, ArtistasModule, GenerosModule, FavoritosModule, PlaylistsModule],
   controllers: [AppController],
   providers: [AppService],
 })

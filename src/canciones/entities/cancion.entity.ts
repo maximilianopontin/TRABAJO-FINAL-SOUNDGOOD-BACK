@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, JoinTable, ManyToMany, ManyToOn
 import { Artistas } from 'src/artistas/entities/artista.entity';
 import { Genero } from 'src/generos/entities/genero.entity';
 import { Favoritos } from 'src/favoritos/entities/favorito.entity';
+import { Playlists } from 'src/playlists/entities/playlist.entity';
 
 // El decorador @Entity indica que esta clase representa una entidad en la base de datos
 
@@ -41,23 +42,9 @@ export class Canciones {
   @ManyToMany(()=> Favoritos, favorito => favorito.canciones)
   favoritos: Favoritos[]
 
+  @ManyToMany(() => Playlists, playlist => playlist.canciones)
+  playlists: Playlists[];
 
-
-  /*
-      // Define la columna 'generoId' como una cadena de texto, clave foranea
-       @Column()
-      generoId: number;
-  
-       // 
-  
-       // Define la columna 'favoritos' como una cadena de texto
-      @Column()
-      favoritos: ;
-        // Define la columna 'playlist' como una cadena de texto
-      @Column()
-      playlist: ;
-      
-      */
 
 }
 
