@@ -9,12 +9,12 @@ export class PlaylistsController {
 
   @Post()
   create(@Body() createPlaylistDto: CreatePlaylistDto) {
-    return this.playlistsService.create(createPlaylistDto);
+    return this.playlistsService.createOnePlaylist(createPlaylistDto);
   }
 
   @Get()
   findAll() {
-    return this.playlistsService.findAll();
+    return this.playlistsService.findAllPlaylists();
   }
 
   @Get(':id')

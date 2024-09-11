@@ -7,6 +7,7 @@ export class Favoritos {
   @PrimaryGeneratedColumn()
   favoritoId: number;
 
+  //Un usuario puede tener varios favoritos y Un favorito puede pertenecer a varios usuarios
   @ManyToMany(() => Usuario, usuario => usuario.favoritos)
   @JoinTable({
     name: 'usuario_favoritos', // Nombre de la tabla de unión
@@ -15,6 +16,7 @@ export class Favoritos {
   })
   usuarios: Usuario[];
 
+  //Un favorito puede contener varias canciones y Una canción puede estar en varios favoritos de diferentes usuarios.
   @ManyToMany(() => Canciones, cancion => cancion.favoritos)
   @JoinTable({
     name: 'favorito_canciones', // Nombre de la tabla de unión

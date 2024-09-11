@@ -9,7 +9,7 @@ export class FavoritosController {
 
   @Post()
   create(@Body() createFavoritoDto: CreateFavoritoDto) {
-    return this.favoritosService.createOneFavorites(createFavoritoDto);
+    return this.favoritosService.createOneFavorite(createFavoritoDto);
   }
 
   @Get()

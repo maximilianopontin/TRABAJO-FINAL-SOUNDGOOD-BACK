@@ -9,11 +9,11 @@ export class Playlists {
     @PrimaryGeneratedColumn()
     playlistId: number;
 
-
+//muchas playlists puede ser creada por un usuario
     @ManyToOne(() => Usuario, usuario => usuario.playlists)
     usuarios: Usuario;
 
-    //Una playlist puede contener varias canciones (Many-to-Many).
+    //Una playlist puede contener varias canciones y Una canción puede aparecer en varias playlists. (Many-to-Many).
     @ManyToMany(() => Canciones, cancion => cancion.playlists)
     @JoinTable({
         name: 'playlist_canciones', // Nombre de la tabla de unión

@@ -11,4 +11,4 @@ import { favoritoProviders } from './favoritos.providers';
   providers: [...favoritoProviders, ...usuarioProviders, FavoritosService],
   exports: [...favoritoProviders]
 })
-export class FavoritosModule {}
+export class FavoritosModule { }
