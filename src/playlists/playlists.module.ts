@@ -4,11 +4,12 @@ import { PlaylistsController } from './playlists.controller';
 import { DatabaseModule } from 'src/database/database.module';
 import { playlistProviders } from './playlists.providers';
 import { usuarioProviders } from 'src/usuarios/usuario.providers';
+import { cancionProviders } from 'src/canciones/cancion.providers';
 
 @Module({
   imports: [DatabaseModule],
   controllers: [PlaylistsController],
-  providers: [...playlistProviders, ...usuarioProviders, PlaylistsService],
+  providers: [...playlistProviders, ...usuarioProviders,...cancionProviders, PlaylistsService],
   exports : [...playlistProviders]
 })
 export class PlaylistsModule { }

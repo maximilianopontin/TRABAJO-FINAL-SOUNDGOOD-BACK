@@ -1,9 +1,10 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, BadRequestException, Param } from '@nestjs/common';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
-import { Repository } from 'typeorm';
+import { Repository, Like} from 'typeorm';
 import { Playlists } from './entities/playlist.entity';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
+import { Canciones } from 'src/canciones/entities/cancion.entity';
 
 @Injectable()
 export class PlaylistsService {
@@ -12,18 +13,27 @@ export class PlaylistsService {
     private playlistRepository: Repository<Playlists>,
     @Inject('USUARIO_REPOSITORY')
     private usuarioRepository: Repository<Usuario>,
+    @Inject('CANCION_REPOSITORY')
+    private cancionRepository: Repository<Canciones>,
   ) { }
 
   async createOnePlaylist(createPlaylistDto: CreatePlaylistDto): Promise<Playlists> {
     const { usuarioId, cancionId, ...restData } = createPlaylistDto;
-    //Se busca al usuario en la base de datos usando el usuarioId
+    //1. Se busca al usuario en la base de datos usando el usuarioId
     const usuario = await this.usuarioRepository.findOne({
       where: { usuarioId }
     });
     if (!usuario) {
       throw new Error('Usuario no encontrado');
     }
-    //Si el usuario existe, se crea una nueva playlist
+
+    // 2. Validamos que todas las canciones existen
+    const canciones = await this.cancionRepository.findByIds(cancionId); // Busca las canciones por sus IDs
+    if (canciones.length !== cancionId.length) {
+      throw new NotFoundException('Una o más canciones no fueron encontradas');
+    }
+
+    //Si el usuario y la cancion existe, se crea una nueva playlist
     const playlist = this.playlistRepository.create({
       ...restData,
       usuarios: usuario, // Usar el objeto de usuario
@@ -45,10 +55,38 @@ export class PlaylistsService {
   }
 
 
-  findOne(id: number) {
-    return `This action returns a #${id} playlist`;
+  async findOnePlaylist(@Param('id') playlistId: number): Promise<Playlists> {
+    const playlist = await this.playlistRepository.findOne({
+      where: { playlistId },
+      relations: ['usuarios', 'canciones'], // Agregamos las relaciones
+    });
+    if (!playlist) throw new NotFoundException(`la playlist con id: ${playlistId} no se encuentra`);
+    return playlist;
   }
 
+  async findPlaylistByTitle(title:string): Promise<Playlists[]> {
+    console.log(`Title received for search: ${title}`); // Verificar el valor del título
+    if (!title || typeof title !== 'string' || title.trim() === '') {
+      throw new BadRequestException('El título proporcionado no es válido');
+    }
+    try {
+      const playlists = await this.playlistRepository.find({
+        where: { title: Like(`%${title}%`) },
+        relations: ['usuarios', 'canciones'],
+      });
+  
+      if (playlists.length === 0) {
+        throw new NotFoundException(`No se encontraron playlists con el título: ${title}`);
+      }
+  
+      return playlists;
+    } catch (error) {
+      console.error('Error en findPlaylistByTitle:', error);
+      throw new Error('Error en la búsqueda de playlists');
+    }
+  }
+
+  
   update(id: number, updatePlaylistDto: UpdatePlaylistDto) {
     return `This action updates a #${id} playlist`;
   }

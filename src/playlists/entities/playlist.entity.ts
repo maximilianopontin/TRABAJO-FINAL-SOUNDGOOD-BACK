@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
 import { Canciones } from 'src/canciones/entities/cancion.entity';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
 
@@ -9,6 +9,10 @@ export class Playlists {
     @PrimaryGeneratedColumn()
     playlistId: number;
 
+    // Define la columna 'title' con una longitud máxima de 20 caracteres
+    @Column({ length: 20})
+    title: string;
+    
 //muchas playlists puede ser creada por un usuario
     @ManyToOne(() => Usuario, usuario => usuario.playlists)
     usuarios: Usuario;
