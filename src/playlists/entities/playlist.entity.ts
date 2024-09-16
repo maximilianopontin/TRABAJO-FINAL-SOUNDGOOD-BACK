@@ -15,7 +15,7 @@ export class Playlists {
     
 //muchas playlists puede ser creada por un usuario
     @ManyToOne(() => Usuario, usuario => usuario.playlists)
-    usuarios: Usuario;
+    usuario: Usuario;
 
     //Una playlist puede contener varias canciones y Una canción puede aparecer en varias playlists. (Many-to-Many).
     @ManyToMany(() => Canciones, cancion => cancion.playlists)

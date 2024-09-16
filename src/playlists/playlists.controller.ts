@@ -25,9 +25,6 @@ export class PlaylistsController {
 
   @Get('search')
   async searchPlaylists(@Query('title') title: string): Promise<Playlists[]> {
-    if (!title || typeof title !== 'string' || title.trim() === '') {
-      throw new NotFoundException('Debe proporcionar un nombre para buscar las playlists');
-    }
 
     return this.playlistsService.findPlaylistByTitle(title);
   }

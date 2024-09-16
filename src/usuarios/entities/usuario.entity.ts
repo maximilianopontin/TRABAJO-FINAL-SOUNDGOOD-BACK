@@ -30,7 +30,7 @@ export class Usuario {
     @ManyToMany(() => Favoritos, favorito => favorito.usuarios)
     favoritos : Favoritos[]
 
-    @OneToMany(() => Playlists, playlist => playlist.usuarios)
+    @OneToMany(() => Playlists, playlist => playlist.usuario)
     playlists: Playlists[];
     //Un usuario puede crear varias playlists (One-to-Many).
 }
