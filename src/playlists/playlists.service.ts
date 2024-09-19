@@ -1,7 +1,7 @@
-import { Injectable, Inject, NotFoundException, BadRequestException, Param } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, BadRequestException, Param, InternalServerErrorException } from '@nestjs/common';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
-import { Repository, Like} from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { Playlists } from './entities/playlist.entity';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { Canciones } from 'src/canciones/entities/cancion.entity';
@@ -64,29 +64,41 @@ export class PlaylistsService {
     return playlist;
   }
 
-  async findPlaylistByTitle(title:string): Promise<Playlists[]> {
+  async findPlaylistByTitle(title: string): Promise<Playlists[]> {
+    
+    const trimmedTitle = title.replace(/\s+/g, '');//expresión regular elimina todos los espacios en blanco dentro del título.
 
-    if (!title || typeof title !== 'string' || title.trim() === '') {
+    if (!trimmedTitle) {
       throw new BadRequestException('El título proporcionado no es válido');
-    }
+    }//Si el título queda vacío, se lanza una excepción de tipo BadRequestException 
+
     try {
-      const playlists = await this.playlistRepository.find({
-        where: { title: Like(`%${title}%`) },
-        relations: ['usuarios', 'canciones'],
-      });
-  
+      //QueryBuilder de TypeORM para realizar la búsqueda en la base de datos
+      const playlists = await this.playlistRepository
+        .createQueryBuilder('playlist')//Se inicia la construcción de la consulta para la tabla o entidad playlist
+        .where('REPLACE(playlist.title, \' \', \'\') LIKE :title', { title: `%${trimmedTitle}%` })
+        //elimina todos los espacios en el título de la base de datos (usando REPLACE) antes de compararlo.
+        .leftJoinAndSelect('playlist.usuario', 'usuario')//hace una unión con la tabla relacionada usuario
+        .leftJoinAndSelect('playlist.canciones', 'canciones')
+        .getMany();//Ejecuta la consulta y devuelve un array con todas las playlists que coinciden con el título buscado.
+
+      // Si no se encuentran playlists, lanzar una excepción
       if (playlists.length === 0) {
-        throw new NotFoundException(`No se encontraron playlists con el título: ${title}`);
+        throw new NotFoundException(`No se encontraron playlists con el título: ${title}`); // Error 404: No encontrado
       }
-  
       return playlists;
+
     } catch (error) {
-      console.error('Error en findPlaylistByTitle:', error);
-      throw new Error('Error en la búsqueda de playlists');
+      // Si el error es una excepción conocida (BadRequest, NotFound), dejar que siga su curso
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+      // Para otros errores, lanzar una excepción más clara
+      throw new InternalServerErrorException('Error interno en la búsqueda de playlists'); // Error 500: Error del servidor
     }
   }
 
-  
+
   update(id: number, updatePlaylistDto: UpdatePlaylistDto) {
     return `This action updates a #${id} playlist`;
   }

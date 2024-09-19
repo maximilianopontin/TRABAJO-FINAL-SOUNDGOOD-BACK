@@ -8,7 +8,7 @@ export class Genero {
 
     @Column({length: 45})
     genero:string;
-
+//Un género puede tener muchas canciones
     @OneToMany(() => Canciones, cancion => cancion.genero)
     canciones: Canciones[];
 }

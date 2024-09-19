@@ -23,7 +23,7 @@ export class PlaylistsController {
     return this.playlistsService.findOnePlaylist(+id);
   }
 
-  @Get('search')
+  @Get('search/by-title')
   async searchPlaylists(@Query('title') title: string): Promise<Playlists[]> {
 
     return this.playlistsService.findPlaylistByTitle(title);
