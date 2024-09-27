@@ -10,7 +10,7 @@ export class CreateCancionesDto {
   @IsInt()
   @Min(1900) // Año mínimo permitido
   @Max(new Date().getFullYear()) // Año máximo es el año actual
-  añoLanzamiento: number;
+  anioLanzamiento: number;
 
   @IsNotEmpty()
   @IsInt()
