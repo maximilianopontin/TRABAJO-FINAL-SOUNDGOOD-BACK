@@ -1,22 +1,20 @@
-import { IsString, Length, IsNotEmpty, Min, Max, IsInt, IsNumber, IsNumberString, IsArray } from "class-validator";
+import { IsString, Length, IsNotEmpty, IsNumberString, IsArray, IsOptional } from 'class-validator';
 
 export class CreateCancionesDto {
   @IsNotEmpty()
-  @IsString()  
+  @IsString()
   @Length(3, 45)
   titulo: string;
 
   @IsNotEmpty()
   @IsNumberString()
-  @Min(1900) // Año mínimo permitido
-  @Max(new Date().getFullYear()) // Año máximo es el año actual
   anioLanzamiento: number;
 
   @IsNotEmpty()
   @IsNumberString()
   duracion: number;
 
-  @IsNotEmpty()
+  @IsOptional() // El archivo será opcional en el DTO inicialmente
   @IsString()
   filename: string;
 
@@ -24,10 +22,8 @@ export class CreateCancionesDto {
   @IsNumberString()
   generoId: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
   @IsNumberString({}, { each: true })
   artistaId: number[];
-
-
 }

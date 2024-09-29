@@ -14,7 +14,7 @@ import {
 import { CancionesService } from './cancion.service';
 import { CreateCancionesDto } from './dto/create-canciones.dto';
 import { UpdateCancionesDto } from './dto/update-canciones.dto';
-import { SongFileInterceptor } from '../interceptors/file.intercerptor'; // Asegúrate de importar correctamente tu interceptor
+import { SongFileInterceptor } from '../interceptors/file.intercerptor';
 
 @Controller('/canciones')
 export class CancionesController {
@@ -26,16 +26,16 @@ export class CancionesController {
   }
 
   @Post()
-  @UseInterceptors(SongFileInterceptor.createFileInterceptor('file')) // interceptor creado
+  @UseInterceptors(SongFileInterceptor.createFileInterceptor('file'))
   createOne(
     @UploadedFile() file: Express.Multer.File,
     @Body() createCancionesDto: CreateCancionesDto,
   ) {
     if (!file) {
-      throw new BadRequestException('File is required'); // Si no se sube un archivo, lanza una excepción
+      throw new BadRequestException('El archivo es requerido');
     }
-    createCancionesDto.filename = file.filename; // Asigna el nombre del archivo subido al DTO
-    return this.cancionesService.createOneSong(createCancionesDto); // Llama al servicio para crear un registro
+    createCancionesDto.filename = file.filename;
+    return this.cancionesService.createOneSong(createCancionesDto);
   }
 
   @Patch('/:id')
