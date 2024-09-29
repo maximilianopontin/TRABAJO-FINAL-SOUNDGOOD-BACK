@@ -2,19 +2,17 @@ import { IsString, Length, IsNotEmpty, Min, Max, IsInt, IsNumber, IsNumberString
 
 export class CreateCancionesDto {
   @IsNotEmpty()
-  @IsNumberString()  
+  @IsString()  
   @Length(3, 45)
   titulo: string;
 
   @IsNotEmpty()
-  @IsInt()
   @IsNumberString()
   @Min(1900) // Año mínimo permitido
   @Max(new Date().getFullYear()) // Año máximo es el año actual
   anioLanzamiento: number;
 
   @IsNotEmpty()
-  @IsInt()
   @IsNumberString()
   duracion: number;
 
