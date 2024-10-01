@@ -26,13 +26,6 @@ export class UsuariosService {
         return user;
     }
 
-    async createOneUser(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
-
-        const usuario = this.usuarioRepository.create(createUsuarioDto);
-        return this.usuarioRepository.save(usuario); 
-        //Este método guarda la instancia creada en la base de datos. Si el guardado es exitoso, devuelve la entidad guardada.
-    }
-
     async updateOneUser(@Param('id') userId: number, updateUsuarioDto: UpdateUsuarioDto): Promise<any> {
         const newUsuario = await this.usuarioRepository.preload({
             //busca un usuario existente basado en el ID. Si no lo encuentra, lanzamos una excepción NotFoundException

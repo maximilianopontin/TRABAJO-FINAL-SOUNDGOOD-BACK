@@ -6,7 +6,7 @@ import { UpdateCancionesDto } from './dto/update-canciones.dto';
 @Controller('canciones')
 export class CancionesController {
   constructor(private readonly cancionesService: CancionesService) {}
-
+//inyectar decorador useguards
   @Post()
   create(@Body() createCancioneDto: CreateCancionesDto) {
     return this.cancionesService.createOneSong(createCancioneDto);

@@ -21,12 +21,7 @@ export class UsuariosController {
   id: number,) {
     return this.usuariosService.findOneUser(+id);
   }
-
-  @Post()
-  create(@Body() createUsuarioDto: CreateUsuarioDto) {
-    return this.usuariosService.createOneUser(createUsuarioDto);
-  }
-
+  
   @Patch(':id')
   update(@Param('id', new ParseIntPipe({
     errorHttpStatusCode:
