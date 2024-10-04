@@ -7,11 +7,10 @@ import {
     UnauthorizedException,
   } from '@nestjs/common';
   import { Request } from 'express';
-  
   import { JwtService } from '@nestjs/jwt';
   
   @Injectable()
-  export class AutenticaionGuard implements CanActivate {//implementa la interfaz CanActivate, y se utiliza para interceptar peticiones entrantes y decidir si se debe conceder acceso o no.
+  export class AutenticacionGuard implements CanActivate {//implementa la interfaz CanActivate, y se utiliza para interceptar peticiones entrantes y decidir si se debe conceder acceso o no.
     constructor(private jwtService: JwtService) {}//inyecta jwtservice para verificar y decodificar el token JWT.
     //define metodo canActivate que permite acceder al contexto de ejecución (representa la solicitud HTTP y la respuesta)
     async canActivate(context: ExecutionContext) {
