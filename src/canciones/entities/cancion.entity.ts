@@ -13,7 +13,7 @@ export class Canciones {
   titulo: string;
 
   @Column()
-  añoLanzamiento: number;
+  anioLanzamiento: number;
 
   @Column()
   duracion: number;
@@ -35,6 +35,6 @@ export class Canciones {
   @ManyToMany(() => Favoritos, favorito => favorito.canciones)
   favoritos: Favoritos[];
 
-  @ManyToMany(() => Playlists, playlist => playlist.canciones)
+  @ManyToMany(() => Playlists, playlist => playlist.canciones, { cascade: true })
   playlists: Playlists[];
 }
