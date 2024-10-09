@@ -59,13 +59,27 @@ export class CancionesController {
   }
 
   // Actualizar una canción existente por id
-  @Patch('/:id')
+  /*@Patch('/:id')
   update(
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) id: number,
     @Body() updateCancionDto: UpdateCancionesDto
   ) {
     return this.cancionesService.updateOneCancion(id,updateCancionDto);
-  }
+  }*/
+ // Actualizar una canción existente por id
+ @Patch('/:id')
+ @UseInterceptors(SongFileInterceptor.createFileInterceptor('file'))
+ update(
+   @UploadedFile() file: Express.Multer.File,
+   @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) id: number,
+   @Body() updateCancionDto: UpdateCancionesDto
+ ) {
+   if (!file) {
+     throw new BadRequestException('El archivo es requerido');
+   }
+   updateCancionDto.filename = file.filename;
+   return this.cancionesService.updateOneCancion(id,updateCancionDto);
+ }
 
 
   // Eliminar una canción por id

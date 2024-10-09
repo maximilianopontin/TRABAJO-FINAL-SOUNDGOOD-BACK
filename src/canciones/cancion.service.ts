@@ -79,17 +79,14 @@ export class CancionesService {
   // Actualizar una canción
   async updateOneCancion(cancionId: number, updateCancionDto: UpdateCancionesDto): Promise<Canciones> {
     const { generoId, artistaId, ...updatedFields } = updateCancionDto;
-  
     // Buscar la canción por su ID
     const cancion = await this.cancionRepository.findOne({
       where: { cancionId },
       relations: ['artistas', 'genero'], 
     });
-  
     if (!cancion) {
       throw new NotFoundException(`La canción con ID ${cancionId} no existe.`);
     }
-  
     // Si generoId existe en el DTO, busca el nuevo género
     if (generoId) {
       const genero = await this.generoRepository.findOne({ where: { generoId } });
@@ -98,25 +95,19 @@ export class CancionesService {
       }
       cancion.genero = genero;
     }
-  
-   
   // Si artistaId existe en el DTO, busca los artistas correspondientes
   if (artistaId && artistaId.length > 0) {
     const artistas = await this.artistaRepository
       .createQueryBuilder('artista')
       .where('artista.artistaId IN (:...ids)', { ids: artistaId })
       .getMany();
-
     if (!artistas || artistas.length !== artistaId.length) {
       throw new NotFoundException('Algunos de los artistas no se encontraron');
     }
-
     cancion.artistas = artistas;
   }
-  
     // Actualizar el resto de los campos
     Object.assign(cancion, updatedFields);
-  
     // Guardar la canción actualizada
     return await this.cancionRepository.save(cancion);
   }
