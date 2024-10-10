@@ -9,9 +9,11 @@ export class Usuario {
     // Define la columna 'id' como la clave primaria generada automáticamente
     @PrimaryGeneratedColumn()
     usuarioId: number;
+    
     // Define la columna 'name' con una longitud máxima de 500 caracteres
     @Column('varchar', { length: 255 })
     nombre: string;
+
     // Define la columna 'username' como un nombre unico
     @Column('varchar', { length: 64, unique: true })
     userName: string;

@@ -1,7 +1,6 @@
-import { Injectable, Inject, NotFoundException, Param, ParseIntPipe } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, Param } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Usuario } from './entities/usuario.entity';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 
 @Injectable()
