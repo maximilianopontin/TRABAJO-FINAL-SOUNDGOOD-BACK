@@ -28,12 +28,13 @@ export class UsuariosService {
 
     async updateOneUser(@Param('id') userId: number, updateUsuarioDto: UpdateUsuarioDto): Promise<any> {
         const newUsuario = await this.usuarioRepository.preload({
-            //busca un usuario existente basado en el ID. Si no lo encuentra, lanzamos una excepción NotFoundException
-            usuarioId: userId,
-            ...updateUsuarioDto
+        // `preload` intenta crear una nueva instancia de usuario con los campos actualizados del DTO,
+        //basándose en el ID proporcionado. Si no encuentra el usuario, devolverá `undefined`.
+            usuarioId: userId,// Mapea el `userId` al campo `usuarioId` de la entidad.
+            ...updateUsuarioDto// Rellena la instancia con las propiedades del DTO.
         });
-        if (!userId) throw new NotFoundException(`EL usuario con id ${userId} no existe.`)
-       
+        if (!newUsuario) throw new NotFoundException(`EL usuario con id ${userId} no existe.`)
+
         return this.usuarioRepository.save(newUsuario) //guarda el usuario actualizado
     }
 

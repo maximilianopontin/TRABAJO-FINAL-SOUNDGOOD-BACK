@@ -65,7 +65,7 @@ export class PlaylistsService {
   }
 
   async findPlaylistByTitle(title: string): Promise<Playlists[]> {
-    
+
     const trimmedTitle = title.replace(/\s+/g, '');//expresión regular elimina todos los espacios en blanco dentro del título.
 
     if (!trimmedTitle) {
@@ -99,11 +99,22 @@ export class PlaylistsService {
   }
 
 
-  update(id: number, updatePlaylistDto: UpdatePlaylistDto) {
-    return `This action updates a #${id} playlist`;
+  async updateOnePlaylist(@Param('id') playlistId: number, updatePlaylistDto: UpdatePlaylistDto): Promise<any> {
+    const newPlaylist = await this.playlistRepository.preload({
+      playlistId: playlistId,
+      ...updatePlaylistDto
+    }
+    );
+    if (!newPlaylist) throw new NotFoundException(`La playlist con id${playlistId} no existe.`)
+    return this.playlistRepository.save(newPlaylist);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} playlist`;
+  async deleteOnePlaylist(@Param('id') playlistId: number): Promise<any> {
+    const playlist = await this.playlistRepository.findOne({
+      where: { playlistId: playlistId }
+    })
+    if (!playlist) throw new NotFoundException(`La playlist con id${playlistId} no existe`);
+    await this.playlistRepository.delete(playlistId);
+    return { message: `Playlist ${playlist.title} deleted` }
   }
 }

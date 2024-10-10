@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param,Query, NotFoundException, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param,Query, NotFoundException, Delete, ParseIntPipe, HttpStatus } from '@nestjs/common';
 import { PlaylistsService } from './playlists.service';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
@@ -28,14 +28,21 @@ export class PlaylistsController {
 
     return this.playlistsService.findPlaylistByTitle(title);
   }
-/*
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePlaylistDto: UpdatePlaylistDto) {
-    return this.playlistsService.update(+id, updatePlaylistDto);
+  update(@Param('id', new ParseIntPipe({
+    errorHttpStatusCode:
+    HttpStatus.NOT_ACCEPTABLE
+})) id: number, 
+@Body() updatePlaylistDto: UpdatePlaylistDto) {
+    return this.playlistsService.updateOnePlaylist(id, updatePlaylistDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.playlistsService.remove(+id);
-  }*/
+  remove(@Param('id', new ParseIntPipe({
+    errorHttpStatusCode:
+    HttpStatus.NOT_ACCEPTABLE
+  })) id: number) {
+    return this.playlistsService.deleteOnePlaylist(id);
+  }
 }
