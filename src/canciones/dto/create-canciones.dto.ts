@@ -1,33 +1,44 @@
-import { IsString, Length, IsNotEmpty, Min, Max, IsInt, IsNumber, IsNumberString, IsArray } from "class-validator";
+import { Transform, Type } from "class-transformer";
+import { IsString, Length, IsNotEmpty, Min, Max, IsInt, IsNumber, IsArray, IsOptional, ArrayNotEmpty } from "class-validator";
 
 export class CreateCancionesDto {
+
   @IsNotEmpty()
-  @IsString()
+  @IsString() 
   @Length(3, 45)
-  titulo: string;
+  titulo?: string;
 
   @IsNotEmpty()
   @IsInt()
   @Min(1900) // Año mínimo permitido
   @Max(new Date().getFullYear()) // Año máximo es el año actual
-  anioLanzamiento: number;
+  @Type(() => Number)
+  anioLanzamiento?: number;
+
 
   @IsNotEmpty()
   @IsInt()
-  duracion: number;
+  @Type(() => Number)
+  duracion?: number;
 
-  @IsNotEmpty()
   @IsString()
-  filename: string;
+  @IsOptional()
+  filename?: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  generoId: number;
+  @IsInt()
+  @Type(() => Number)
+  generoId?: number;
 
   @IsNotEmpty()
   @IsArray()
   @IsNumber({}, { each: true })
-  artistaId: number[];
-
-
+  @ArrayNotEmpty()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return value.split(',').map((id) => parseInt(id.trim(), 10));
+    }
+    return value;
+  }) // transforma el array en un string 
+  artistaId?: number[];
 }
