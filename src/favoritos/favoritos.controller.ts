@@ -6,7 +6,7 @@ import { UpdateFavoritoDto } from './dto/update-favorito.dto';
 @Controller('favoritos')
 export class FavoritosController {
   constructor(private readonly favoritosService: FavoritosService) {}
-
+ 
   @Post()
   create(@Body() createFavoritoDto: CreateFavoritoDto) {
     return this.favoritosService.createOneFavorite(createFavoritoDto);
