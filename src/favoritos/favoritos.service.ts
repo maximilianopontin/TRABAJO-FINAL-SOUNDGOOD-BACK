@@ -14,6 +14,7 @@ export class FavoritosService {
     private usuarioRepository: Repository<Usuario>,
   ) { }
 
+  //Crear favoritos
   async createOneFavorite(createFavoritoDto: CreateFavoritoDto): Promise<Favoritos> {
     const { usuarioId, cancionId, ...favoritoData } = createFavoritoDto
     //Se busca al usuario en la base de datos usando el usuarioId
@@ -34,25 +35,38 @@ export class FavoritosService {
     return this.favoritoRepository.save(favorito);
   }
 
+  //Trae todos los favoritos de la base de datos, incluyendo las relaciones con usuarios y canciones 
   async findAllFavorites(): Promise<Favoritos[]> {
-    //Trae todos los favoritos de la base de datos, incluyendo las relaciones con usuarios y canciones 
     const favorito = await this.favoritoRepository.find({
       relations: ['usuarios', 'canciones']
     });
     if (!favorito.length) throw new NotFoundException("no favorites found in database");
     return favorito;
-
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} favorito`;
-  }
+  async findOne(id: number) {
+    const favorito = await this.favoritoRepository.findOne({
+      where: { favoritoId: id },
+      relations: ['canciones', 'usuarios']
+    });
+    if(!favorito){
+      throw new NotFoundException(`El favorito con ID ${id} no se encontro`);
 
+    }
+    return favorito;
+  }
+//Modificar un favorito
   update(id: number, updateFavoritoDto: UpdateFavoritoDto) {
     return `This action updates a #${id} favorito`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} favorito`;
+  //eliminar un favorito
+  async remove(id: number): Promise<any> {
+    const result = await this.favoritoRepository.delete(id);
+    if(!result){
+      throw new NotFoundException(`El favorito con ID ${id} no se encontro`);
+    } 
+    return { message: `El favorito con ${id} fue eliminado` }
+  
   }
 }
