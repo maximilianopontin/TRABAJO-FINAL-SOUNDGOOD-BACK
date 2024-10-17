@@ -41,8 +41,6 @@ export class ArtistasService {
 //Eliminamos un artista
 
 //Configurar nuevante la eliminacion en castada de la tabla intermedia de cancion y artista 
-
-
   async remove(id: number): Promise<any> {
     const result = await this.artistaRepository.delete(id);
     if(!result){
