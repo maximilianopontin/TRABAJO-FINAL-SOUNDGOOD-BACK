@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, Param } from '@nestjs/common';
 import { CreateArtistaDto } from './dto/create-artista.dto';
 import { UpdateArtistaDto } from './dto/update-artista.dto';
 import { Artistas } from './entities/artista.entity';
@@ -22,7 +22,7 @@ export class ArtistasService {
     return await this.artistaRepository.find();
   }
 //Buscamos un artista por id
-  async findOne(id: number): Promise<any> {
+  async findOneArtist(id: number): Promise<any> {
     const artista = await this.artistaRepository.findOne({
       where: {artistaId: id},
       relations: ['canciones']
@@ -34,14 +34,17 @@ export class ArtistasService {
   }
 
 //Modificamos un artista
-  update(id: number, updateArtistaDto: UpdateArtistaDto) {
-    return `This action updates a #${id} artista`;
+  async updateArtist(@Param('id') artistId: number, updateArtistaDto: UpdateArtistaDto): Promise<any> {
+    const newArtist = await this.artistaRepository.preload({
+      artistaId: artistId,
+      ...updateArtistaDto
+    });
+    if(!newArtist) throw new NotFoundException(`El artista con id${artistId} no existe.`)
+    return this.artistaRepository.save(newArtist);
   }
 
 //Eliminamos un artista
-
-//Configurar nuevante la eliminacion en castada de la tabla intermedia de cancion y artista 
-  async remove(id: number): Promise<any> {
+  async removeArtist(id: number): Promise<any> {
     const result = await this.artistaRepository.delete(id);
     if(!result){
       throw new NotFoundException(`El artista con id ${id} no se encontro`)

@@ -19,16 +19,16 @@ export class ArtistasController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.artistasService.findOne(+id);
+    return this.artistasService.findOneArtist(+id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateArtistaDto: UpdateArtistaDto) {
-    return this.artistasService.update(+id, updateArtistaDto);
+    return this.artistasService.updateArtist(+id, updateArtistaDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.artistasService.remove(+id);
+    return this.artistasService.removeArtist(+id);
   }
 }

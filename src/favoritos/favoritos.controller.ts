@@ -19,16 +19,16 @@ export class FavoritosController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.favoritosService.findOne(+id);
+    return this.favoritosService.findOneFavorite(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFavoritoDto: UpdateFavoritoDto) {
-    return this.favoritosService.update(+id, updateFavoritoDto);
+  update(@Param('id') id: number, @Body() updateFavoritoDto: UpdateFavoritoDto) {
+    return this.favoritosService.updateFavorite(+id, updateFavoritoDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.favoritosService.remove(+id);
+    return this.favoritosService.removeFavorite(+id);
   }
 }
