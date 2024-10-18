@@ -4,10 +4,12 @@ import { CreateCancionesDto } from './dto/create-canciones.dto';
 import { UpdateCancionesDto } from './dto/update-canciones.dto';
 import { AutenticacionGuard } from '../autenticacion/autenticacion.guard';
 import { SongFileInterceptor } from '../interceptors/file.intercerptor';
-
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 @Controller('canciones')
 export class CancionesController {
   constructor(private readonly cancionesService: CancionesService) { }
+  
+  @Throttle({ default: { limit: 3, ttl: 60000} })//permite maximo de 3 peticiones que puede hacer el usuario en 60 segundos
   @Get()
   findAll() {
     return this.cancionesService.findAllSongs();

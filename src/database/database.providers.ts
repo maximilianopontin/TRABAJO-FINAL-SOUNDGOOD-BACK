@@ -19,7 +19,7 @@ export const databaseProviders = [
                 entities: [
                     __dirname + '/../**/*.entity{.ts,.js}', // Ruta donde se encuentran las entidades
                 ],
-                synchronize: true,            // Sincroniza la base de datos con el esquema de las entidades en cada ejecución (útil solo en desarrollo)
+                synchronize: true,           // Sincroniza la base de datos con el esquema de las entidades en cada ejecución (útil solo en desarrollo)
             });
 
             // Inicializa la conexión al DataSource y devuelve la instancia inicializada
