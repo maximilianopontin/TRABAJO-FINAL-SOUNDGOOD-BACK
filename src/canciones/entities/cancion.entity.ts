@@ -3,6 +3,8 @@ import { Artistas } from 'src/artistas/entities/artista.entity';
 import { Genero } from 'src/generos/entities/genero.entity';
 import { Favoritos } from 'src/favoritos/entities/favorito.entity';
 import { Playlists } from 'src/playlists/entities/playlist.entity';
+import { Top10 } from 'src/top10/entities/top10.entity';
+import { Tendencia } from 'src/tendencias/entities/tendencia.entity';
 
 @Entity("canciones")
 export class Canciones {
@@ -37,4 +39,10 @@ export class Canciones {
 
   @ManyToMany(() => Playlists, playlist => playlist.canciones, { cascade: true })
   playlists: Playlists[];
+
+  @ManyToMany(() => Top10, top10 => top10.canciones)
+  top10Id: Top10[];
+
+  @ManyToMany(()=> Tendencia, tendencia => tendencia.canciones)
+  tendenciaId: Tendencia[];
 }
