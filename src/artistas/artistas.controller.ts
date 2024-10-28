@@ -2,12 +2,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ArtistasService } from './artistas.service';
 import { CreateArtistaDto } from './dto/create-artista.dto';
 import { UpdateArtistaDto } from './dto/update-artista.dto';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('artistas')
 export class ArtistasController {
   constructor(private readonly artistasService: ArtistasService) {}
 
   @Post()
+  @ApiResponse({status: 201, description:'El registro se ha creado correctamente.'})
+@ApiResponse({ status: 403, description: 'Prohibido.'})
   create(@Body() createArtistaDto: CreateArtistaDto) {
     return this.artistasService.createOneArtist(createArtistaDto);
   }
