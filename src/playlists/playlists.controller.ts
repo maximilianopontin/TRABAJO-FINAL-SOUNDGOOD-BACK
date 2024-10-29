@@ -3,12 +3,15 @@ import { PlaylistsService } from './playlists.service';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
 import { Playlists } from './entities/playlist.entity';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('playlists')
 export class PlaylistsController {
   constructor(private readonly playlistsService: PlaylistsService) {}
 
   @Post()
+  @ApiResponse({status: 201, description:'El registro se ha creado correctamente.'})
+  @ApiResponse({ status: 403, description: 'Prohibido.'})
   create(@Body() createPlaylistDto: CreatePlaylistDto) {
     return this.playlistsService.createOnePlaylist(createPlaylistDto);
   }

@@ -4,6 +4,7 @@ import { CreateCancionesDto } from './dto/create-canciones.dto';
 import { UpdateCancionesDto } from './dto/update-canciones.dto';
 import { AutenticacionGuard } from '../autenticacion/autenticacion.guard';
 import { SongFileInterceptor } from '../interceptors/file.intercerptor';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('canciones')
 export class CancionesController {
@@ -31,7 +32,10 @@ export class CancionesController {
   // Crear una nueva canción con archivo
   //inyectar decorador useguards
   @UseGuards(AutenticacionGuard)
+  
   @Post()
+  @ApiResponse({status: 201, description:'El registro se ha creado correctamente.'})
+  @ApiResponse({ status: 403, description: 'Prohibido.'})
   @UseInterceptors(SongFileInterceptor.createFileInterceptor('file'))
   createOne(
     @UploadedFile() file: Express.Multer.File,

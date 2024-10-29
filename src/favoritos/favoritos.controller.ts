@@ -2,12 +2,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { FavoritosService } from './favoritos.service';
 import { CreateFavoritoDto } from './dto/create-favorito.dto';
 import { UpdateFavoritoDto } from './dto/update-favorito.dto';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('favoritos')
 export class FavoritosController {
   constructor(private readonly favoritosService: FavoritosService) {}
  
   @Post()
+  @ApiResponse({status: 201, description:'El registro se ha creado correctamente.'})
+  @ApiResponse({ status: 403, description: 'Prohibido.'})
   create(@Body() createFavoritoDto: CreateFavoritoDto) {
     return this.favoritosService.createOneFavorite(createFavoritoDto);
   }

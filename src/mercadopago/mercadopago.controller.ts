@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+/*import { Controller, Post, Body } from '@nestjs/common';
 import {MercadopagoService} from './mercadopago.service';
 
 @Controller('mercadopago')
@@ -16,4 +16,4 @@ export class MercadoPagoController {
       throw error;
     }
   }
-}
+}*/
