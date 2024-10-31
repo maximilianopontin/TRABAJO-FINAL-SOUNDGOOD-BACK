@@ -6,7 +6,7 @@ import { Playlists } from './entities/playlist.entity';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { Canciones } from 'src/canciones/entities/cancion.entity';
 
-@Injectable()
+@Injectable() 
 export class PlaylistsService {
   constructor(
     @Inject('PLAYLIST_REPOSITORY')
@@ -99,14 +99,35 @@ export class PlaylistsService {
   }
 
 
-  async updateOnePlaylist(@Param('id') playlistId: number, updatePlaylistDto: UpdatePlaylistDto): Promise<any> {
-    const newPlaylist = await this.playlistRepository.preload({
-      playlistId: playlistId,
-      ...updatePlaylistDto
-    }
-    );
-    if (!newPlaylist) throw new NotFoundException(`La playlist con id${playlistId} no existe.`)
-    return this.playlistRepository.save(newPlaylist);
+  async updateOnePlaylist( playlistId: number, updatePlaylistDto: UpdatePlaylistDto): Promise<Playlists> {
+
+const {cancionId, ...updateFilelds} = updatePlaylistDto;
+
+    const playlist = await this.playlistRepository.findOne({
+   where: {playlistId},
+   relations: ['canciones']
+    });
+
+    if (!playlist) throw new NotFoundException(`La playlist con id${playlistId} no existe.`)
+
+      if (cancionId && cancionId.length > 0) {
+        const canciones = await this.cancionRepository
+          .createQueryBuilder('cancion')
+          .where('cancion.cancionId IN (:...ids)', { ids: cancionId })
+          .getMany();
+    
+        // Verificar si todas las canciones fueron encontradas
+        if (!canciones || canciones.length !== cancionId.length) {
+          throw new NotFoundException('Algunas de las canciones no se encontraron');
+        }
+    
+        // Asignar las nuevas canciones al favorito
+        playlist.canciones = canciones;
+      }
+
+      Object.assign(playlist, updateFilelds);
+
+    return this.playlistRepository.save(playlist);
   }
 
   async deleteOnePlaylist(@Param('id') playlistId: number): Promise<any> {
