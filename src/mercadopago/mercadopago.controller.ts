@@ -1,9 +1,16 @@
-/*import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import {MercadopagoService} from './mercadopago.service';
 
 @Controller('mercadopago')
 export class MercadoPagoController {
   constructor(private readonly mercadoPagoService: MercadopagoService) {}
+
+
+@Get("/")
+async getPreference (){
+  return this.mercadoPagoService.getPreference();
+
+}
 
   @Post('/create_preference')
   async createPreference(@Body() preferenceData) {
@@ -16,4 +23,4 @@ export class MercadoPagoController {
       throw error;
     }
   }
-}*/
+}

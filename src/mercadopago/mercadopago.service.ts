@@ -1,4 +1,4 @@
-/*import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import * as mercadopago from 'mercadopago';
 
@@ -13,7 +13,9 @@ export class MercadopagoService {
         })
     }
 
-
+async getPreference(){
+    return {message: "Estas en mercado pago"}
+};
 
     async createPreference(preferenceData) {
 
@@ -24,4 +26,3 @@ export class MercadopagoService {
 }
 
 
-*/
