@@ -1,6 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpStatus } from '@nestjs/common';
 import { TendenciasService } from './tendencias.service';
-import { CreateTendenciaDto } from './dto/create-tendencia.dto';
 import { UpdateTendenciaDto } from './dto/update-tendencia.dto';
 import { Tendencia } from './entities/tendencia.entity';
 
@@ -18,18 +17,20 @@ export class TendenciasController {
     return this.tendenciasService.findAllTendencia();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tendenciasService.findOne(+id);
-  }
-
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTendenciaDto: UpdateTendenciaDto) {
-    return this.tendenciasService.update(+id, updateTendenciaDto);
+  update(@Param('id', new ParseIntPipe({
+    errorHttpStatusCode:
+    HttpStatus.NOT_ACCEPTABLE
+  })) id: number,
+   @Body() updateTendenciaDto: UpdateTendenciaDto) {
+    return this.tendenciasService.updateTendencia(id, updateTendenciaDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tendenciasService.remove(+id);
+  remove(@Param('id',new ParseIntPipe({
+    errorHttpStatusCode:
+    HttpStatus.NOT_ACCEPTABLE
+  })) id:number) {
+    return this.tendenciasService.removeTendencia(id);
   }
 }

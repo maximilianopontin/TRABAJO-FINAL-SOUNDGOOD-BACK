@@ -5,7 +5,7 @@ export class Tendencia {
     @PrimaryGeneratedColumn()
     tendenciasId: number;
 
-    @ManyToMany(() => Canciones, { cascade: true })
+    @ManyToMany(() => Canciones, (cancion) => cancion.tendenciaId)
     @JoinTable()
     canciones: Canciones[];
 }

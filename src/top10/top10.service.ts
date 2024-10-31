@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, Param } from '@nestjs/common';
 import { CreateTop10Dto } from './dto/create-top10.dto';
 import { UpdateTop10Dto } from './dto/update-top10.dto';
 import { In, Repository } from 'typeorm';
@@ -40,15 +40,41 @@ export class Top10Service {
     
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} top10`;
+ 
+  async updateTop10( top10Id: number, updateTop10Dto: UpdateTop10Dto): Promise<Top10> {
+    const {cancionId, ...updateFilelds} = updateTop10Dto
+
+    const top10 = await this.top10Repository.findOne({
+    where: {top10Id},
+    relations:['canciones']
+    });
+    if (!top10) throw new NotFoundException('Este top 10 no existe')
+
+      if (cancionId && cancionId.length > 0) {
+        const canciones = await this.cancionRepository
+          .createQueryBuilder('cancion')
+          .where('cancion.cancionId IN (:...ids)', { ids: cancionId })
+          .getMany();
+    
+        // Verificar si todas las canciones fueron encontradas
+        if (!canciones || canciones.length !== cancionId.length) {
+          throw new NotFoundException('Algunas de las canciones no se encontraron');
+        }
+    
+        // Asignar las nuevas canciones al favorito
+        top10.canciones = canciones;
+      }
+
+      Object.assign(top10, updateFilelds);
+
+    return await this.top10Repository.save(top10);
   }
 
-  update(id: number, updateTop10Dto: UpdateTop10Dto) {
-    return `This action updates a #${id} top10`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} top10`;
+ async removeTop10(@Param('id')top10Id: number): Promise<any> {
+  const top10 = await this.top10Repository.findOne({
+    where: {top10Id: top10Id}
+  })
+  if(!top10) throw new NotFoundException(`El top10 con id${top10Id} no existe`);
+    return await this.top10Repository.delete(top10Id);
   }
 }

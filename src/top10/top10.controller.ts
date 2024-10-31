@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpStatus } from '@nestjs/common';
 import { Top10Service } from './top10.service';
 import { UpdateTop10Dto } from './dto/update-top10.dto';
 import { Top10 } from './entities/top10.entity';
@@ -17,18 +17,20 @@ export class Top10Controller {
     return this.top10Service.findAllTop10();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.top10Service.findOne(+id);
-  }
-
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTop10Dto: UpdateTop10Dto) {
-    return this.top10Service.update(+id, updateTop10Dto);
+  update(@Param('id', new ParseIntPipe({
+    errorHttpStatusCode:
+    HttpStatus.NOT_ACCEPTABLE
+  })) id: number,
+   @Body() updateTop10Dto: UpdateTop10Dto) {
+    return this.top10Service.updateTop10(id, updateTop10Dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.top10Service.remove(+id);
+  remove(@Param('id', new ParseIntPipe({
+    errorHttpStatusCode:
+    HttpStatus.NOT_ACCEPTABLE
+  })) id: number) {
+    return this.top10Service.removeTop10(id);
   }
 }

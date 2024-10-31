@@ -40,9 +40,9 @@ export class Canciones {
   @ManyToMany(() => Playlists, playlist => playlist.canciones, { cascade: true })
   playlists: Playlists[];
 
-  @ManyToMany(() => Top10, top10 => top10.canciones)
+  @ManyToMany(() => Top10, top10 => top10.canciones, { cascade: true })
   top10Id: Top10[];
 
-  @ManyToMany(()=> Tendencia, tendencia => tendencia.canciones)
+  @ManyToMany(()=> Tendencia, tendencia => tendencia.canciones, { cascade: true })
   tendenciaId: Tendencia[];
 }
