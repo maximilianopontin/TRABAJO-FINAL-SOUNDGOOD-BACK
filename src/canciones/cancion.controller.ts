@@ -4,7 +4,9 @@ import { CreateCancionesDto } from './dto/create-canciones.dto';
 import { UpdateCancionesDto } from './dto/update-canciones.dto';
 import { AutenticacionGuard } from '../autenticacion/autenticacion.guard';
 import { SongFileInterceptor } from '../interceptors/file.intercerptor';
+
 import { ApiResponse } from '@nestjs/swagger';
+import { ImageFileInterceptor } from 'src/interceptors/image-file.interceptor';
 
 @Controller('canciones')
 export class CancionesController {
@@ -32,34 +34,51 @@ export class CancionesController {
   // Crear una nueva canción con archivo
   //inyectar decorador useguards
   @UseGuards(AutenticacionGuard)
-  
+
   @Post()
-  @ApiResponse({status: 201, description:'El registro se ha creado correctamente.'})
-  @ApiResponse({ status: 403, description: 'Prohibido.'})
-  @UseInterceptors(SongFileInterceptor.createFileInterceptor('file'))
+  @ApiResponse({ status: 201, description: 'El registro se ha creado correctamente.' })
+  @ApiResponse({ status: 403, description: 'Prohibido.' })
+  @UseInterceptors(SongFileInterceptor.createFileInterceptor('songFile'),
+    ImageFileInterceptor.createFileInterceptor('imageFile')
+  )
   createOne(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile('songFile') songFile: Express.Multer.File,
+    @UploadedFile('imageFile') imageFile: Express.Multer.File,
     @Body() createCancionesDto: CreateCancionesDto,
   ) {
-    if (!file) {
+    if (!songFile || !imageFile) 
+      {
       throw new BadRequestException('El archivo es requerido');
     }
-    createCancionesDto.filename = file.filename;
+
+    // Asignar los nombres de archivo al DTO
+    createCancionesDto.songFilename = songFile.filename;
+    createCancionesDto.imageFilename = imageFile.filename;
     return this.cancionesService.createOneSong(createCancionesDto);
   }
 
   // Actualizar una canción existente por id
   @Patch('/:id')
-  @UseInterceptors(SongFileInterceptor.createFileInterceptor('file'))
+  @UseInterceptors(SongFileInterceptor.createFileInterceptor('songFile'),
+    ImageFileInterceptor.createFileInterceptor('imageFile')
+  )
   update(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile('songFile') songFile: Express.Multer.File,
+    @UploadedFile('imageFile') imageFile: Express.Multer.File,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) id: number,
     @Body() updateCancionDto: UpdateCancionesDto
   ) {
-    if (!file) {
+    if (!songFile) {
       throw new BadRequestException('El archivo es requerido');
     }
-    updateCancionDto.filename = file.filename;
+    // Si se proporciona un nuevo archivo de canción, actualiza el filename
+    updateCancionDto.songFilename = songFile.filename;
+
+    // Si se proporciona una nueva imagen, actualiza el imageFilename
+    if (!imageFile) {
+      updateCancionDto.imageFilename = imageFile.filename;
+    }
+    // Llama al servicio para actualizar la canción con los datos proporcionados
     return this.cancionesService.updateOneCancion(id, updateCancionDto);
   }
 
@@ -70,5 +89,5 @@ export class CancionesController {
     return this.cancionesService.remove(id);
   }
 }
- 
+
 

@@ -26,7 +26,12 @@ export class CreateCancionesDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  filename?: string;
+  songFilename?: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  imageFilename?: string;
 
   @ApiProperty()
   @IsNotEmpty()

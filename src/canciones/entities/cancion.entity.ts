@@ -20,8 +20,13 @@ export class Canciones {
   @Column()
   duracion: number;
 
-  @Column()
-  filename: string;
+  // Campo para almacenar el nombre del archivo de la canción
+  @Column({ nullable: true })
+  songFilename: string;
+
+  // Campo para almacenar el nombre del archivo de la imagen
+  @Column({ nullable: true })
+  imageFilename: string;
 
   @ManyToMany(() => Artistas, artista => artista.canciones)
   @JoinTable({
@@ -43,6 +48,6 @@ export class Canciones {
   @ManyToMany(() => Top10, top10 => top10.canciones, { cascade: true })
   top10Id: Top10[];
 
-  @ManyToMany(()=> Tendencia, tendencia => tendencia.canciones, { cascade: true })
+  @ManyToMany(() => Tendencia, tendencia => tendencia.canciones, { cascade: true })
   tendenciaId: Tendencia[];
 }
