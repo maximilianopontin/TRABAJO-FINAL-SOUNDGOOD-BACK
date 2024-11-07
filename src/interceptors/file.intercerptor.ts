@@ -1,37 +1,55 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { FileInterceptor as MulterInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import * as crypto from 'crypto'; // Para generar UUID
 
 @Injectable()
-export class SongFileInterceptor {
-  static createFileInterceptor(fieldName: string) {
-    return MulterInterceptor(fieldName, {
-      storage: diskStorage({
-        destination: './uploadsSongs', 
-        filename: (req, file, callback) => {
-          const uniqueSuffix = crypto.randomUUID();
-          const ext = extname(file.originalname);
-          const filename = `song-${uniqueSuffix}${ext}`;
-          callback(null, filename);
+export class FilesInterceptor {
+  static getInterceptor() {
+    return FileFieldsInterceptor(
+      [
+        { name: 'songFile', maxCount: 1 },
+        { name: 'imageFile', maxCount: 1 }
+      ],
+      {
+        storage: diskStorage({
+          destination: (req, file, cb) => {
+            const destinationPath = file.fieldname === 'songFile' ? './uploadsSongs' : './uploadsImages';
+            cb(null, destinationPath);
+          },
+          filename: (req, file, cb) => {
+            const uniqueSuffix = crypto.randomUUID();
+            const ext = extname(file.originalname);
+            const prefix = file.fieldname === 'songFile' ? 'song' : 'image';
+            const filename = `${prefix}-${uniqueSuffix}${ext}`;
+            cb(null, filename);
+          },
+        }),
+        fileFilter: (req, file, cb) => {
+          const allowedTypes = file.fieldname === 'songFile'
+            ? /mp3|wav|aac|mpeg/
+            : /jpeg|jpg|png|gif/;
+          const ext = extname(file.originalname).toLowerCase();
+          const isMimeTypeValid = allowedTypes.test(file.mimetype);
+          const isExtNameValid = allowedTypes.test(ext);
+          if (isMimeTypeValid && isExtNameValid) {
+            cb(null, true);
+          } else {
+            cb(
+              new BadRequestException(
+                file.fieldname === 'songFile'
+                  ? 'Solo se permiten archivos MP3, WAV o AAC para la canción'
+                  : 'Solo se permiten archivos JPEG, PNG o GIF para la imagen'
+              ),
+              false
+            );
+          }
         },
-      }),
-      fileFilter: (req, file, callback) => {
-        const allowedTypes = /mp3|wav|aac|mpeg/;
-        const ext = extname(file.originalname).toLowerCase();
-        const mimeType = allowedTypes.test(file.mimetype);
-        const extName = allowedTypes.test(ext);
-        if (mimeType && extName) {
-          return callback(null, true);
-        } else {
-          callback(
-            new BadRequestException('Solo se permiten archivos MP3, WAV o AAC'),
-            false,
-          );
-        }
-      },
-      limits: { fileSize: 10 * 1024 * 1024 }, // Limitar a 10 MB
-    });
+        limits: {
+          fileSize: 10 * 1024 * 1024, // 10MB
+        },
+      }
+    );
   }
 }
