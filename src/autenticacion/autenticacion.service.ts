@@ -11,6 +11,7 @@ import { CreateUsuarioDto } from 'src/usuarios/dto/create-usuario.dto';
 import { Repository } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
 import { HashService } from './hash/hash.service';
+
 @Injectable()
 export class AutenticacionService {
   @Inject ('USUARIO_REPOSITORY')
