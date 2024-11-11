@@ -2,13 +2,9 @@ import { Injectable, Inject, NotFoundException, Param } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Usuario } from './entities/usuario.entity';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
 
 @Injectable()
 export class UsuariosService {
-    createUser(createUsuarioDto: CreateUsuarioDto) {
-      throw new Error('Method not implemented.');
-    }
     constructor(
         @Inject('USUARIO_REPOSITORY')
         private usuarioRepository: Repository<Usuario>
@@ -20,8 +16,7 @@ export class UsuariosService {
         return await this.usuarioRepository.find();
     }
 
-
-    async findOneUser(@Param('id') userId: number): Promise<Usuario> {
+    async findOneUser(userId: number): Promise<Usuario> {
         const user = await this.usuarioRepository.findOne({
             where: { usuarioId: userId }
         }); //para buscar un usuario con un ID específico. Esto asegura que se busque el usuario correcto en función del parámetro userId.
@@ -29,17 +24,21 @@ export class UsuariosService {
         return user;
     }
 
-    async updateOneUser(@Param('id') userId: number, updateUsuarioDto: UpdateUsuarioDto): Promise<any> {
+    async updateOneUser(userId: string, updateUsuarioDto: UpdateUsuarioDto): Promise<any> {
+        // Utilizamos preload para cargar la entidad de usuario con los nuevos datos
         const newUsuario = await this.usuarioRepository.preload({
-        // `preload` intenta crear una nueva instancia de usuario con los campos actualizados del DTO,
-        //basándose en el ID proporcionado. Si no encuentra el usuario, devolverá `undefined`.
-            usuarioId: userId,// Mapea el `userId` al campo `usuarioId` de la entidad.
-            ...updateUsuarioDto// Rellena la instancia con las propiedades del DTO.
+            userName: userId, // El userId ahora proviene del token, no de la URL
+          ...updateUsuarioDto,  // Se rellenan los campos del DTO en la entidad
         });
-        if (!newUsuario) throw new NotFoundException(`EL usuario con id ${userId} no existe.`)
-
-        return this.usuarioRepository.save(newUsuario) //guarda el usuario actualizado
-    }
+      
+        // Si no se encuentra el usuario, lanzamos una excepción
+        if (!newUsuario) {
+          throw new NotFoundException(`El usuario con id ${userId} no existe.`);
+        }
+      
+        // Guardamos los cambios en la base de datos
+        return this.usuarioRepository.save(newUsuario);
+      }
 
     async deleteOneUser(@Param('id') userId: number): Promise<any> {
         // busca el usuario por su ID
