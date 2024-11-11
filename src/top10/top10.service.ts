@@ -16,13 +16,13 @@ export class Top10Service {
 
    // Crear una nueva entrada en Top10
    async createTop10(cancionesId: number[]): Promise<Top10> {
-    if (cancionesId.length !== 3) { //Cambiar el 3 por 10 que vana  ser la  cantidad de canciones que debe tener
+    if (cancionesId.length !== 10) { //Cambiar el 3 por 10 que vana  ser la  cantidad de canciones que debe tener
       throw new BadRequestException('Debe haber exactamente 10 canciones en el Top 10.');
     }
     const canciones = await this.cancionRepository.find({
       where: { cancionId: In(cancionesId) }
     });
-    if (canciones.length !== 3) { //cambiar el 3 por el 10
+    if (canciones.length !== 10) { //cambiar el 3 por el 10
       throw new BadRequestException('Algunas de las canciones no existen en la base de datos.');
     }
     const nuevoTop10 = this.top10Repository.create({ canciones });
