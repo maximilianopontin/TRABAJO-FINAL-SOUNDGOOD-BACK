@@ -15,16 +15,17 @@ export class UsuariosController {
 
  @UseGuards(AutenticacionGuard)
   @Get('perfil')
-  findOne(@Request() req) {
-    const userId = req.userName.sub
+  findOne(@Request() req) {    
+    const userId = req.user.sub
      // Obtenemos el userId desde el token de autenticación
-    return this.usuariosService.findOneUser(userId);
+   return this.usuariosService.findOneUser(userId);
   }
   
   @UseGuards(AutenticacionGuard)
   @Patch('perfil')
   update(@Request() req, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    const userId = req.userName.sub
+    console.log(req);
+    const userId = req.user.sub
     console.log('User ID from token:', userId); 
     return this.usuariosService.updateOneUser(userId, updateUsuarioDto);
   }

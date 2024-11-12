@@ -24,10 +24,10 @@ export class UsuariosService {
         return user;
     }
 
-    async updateOneUser(userId: string, updateUsuarioDto: UpdateUsuarioDto): Promise<any> {
+    async updateOneUser(userId: number, updateUsuarioDto: UpdateUsuarioDto): Promise<any> {
         // Utilizamos preload para cargar la entidad de usuario con los nuevos datos
         const newUsuario = await this.usuarioRepository.preload({
-            userName: userId, // El userId ahora proviene del token, no de la URL
+            usuarioId: userId, // El userId ahora proviene del token, no de la URL
           ...updateUsuarioDto,  // Se rellenan los campos del DTO en la entidad
         });
       
