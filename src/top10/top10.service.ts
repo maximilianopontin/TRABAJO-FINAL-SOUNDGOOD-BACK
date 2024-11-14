@@ -4,6 +4,7 @@ import { UpdateTop10Dto } from './dto/update-top10.dto';
 import { In, Repository } from 'typeorm';
 import { Top10 } from './entities/top10.entity';
 import { Canciones } from 'src/canciones/entities/cancion.entity';
+import { elementAt } from 'rxjs';
 
 @Injectable()
 export class Top10Service {
@@ -16,13 +17,13 @@ export class Top10Service {
 
    // Crear una nueva entrada en Top10
    async createTop10(cancionesId: number[]): Promise<Top10> {
-    if (cancionesId.length !== 3) { //Cambiar el 3 por 10 que vana  ser la  cantidad de canciones que debe tener
+    if (cancionesId.length !== 10) { //Cambiar el 3 por 10 que vana  ser la  cantidad de canciones que debe tener
       throw new BadRequestException('Debe haber exactamente 10 canciones en el Top 10.');
     }
     const canciones = await this.cancionRepository.find({
       where: { cancionId: In(cancionesId) }
     });
-    if (canciones.length !== 3) { //cambiar el 3 por el 10
+    if (canciones.length !== 10) { //validacion para la cantidad de canciones
       throw new BadRequestException('Algunas de las canciones no existen en la base de datos.');
     }
     const nuevoTop10 = this.top10Repository.create({ canciones });
@@ -30,16 +31,26 @@ export class Top10Service {
   }
 
  async findAllTop10(): Promise<Top10[]> {
+
   const top10 = await this.top10Repository.find({
     relations: ['canciones']
   })
+
   if(!top10){
     throw new NotFoundException('No se encontro ningun top 10')
   }
-  return top10;
-    
+  else{
+    return top10.map(item => ({
+      top10Id: item.top10Id,
+      canciones: item.canciones.map(cancion => ({
+        titulo: cancion.titulo,
+        songFilename: cancion.songFilename,
+        imageFilename: cancion.imageFilename,
+        genero: cancion.genero ? cancion.genero: '', 
+      })),
+    }));
   }
-
+  }
  
   async updateTop10( top10Id: number, updateTop10Dto: UpdateTop10Dto): Promise<Top10> {
     const {cancionId, ...updateFilelds} = updateTop10Dto

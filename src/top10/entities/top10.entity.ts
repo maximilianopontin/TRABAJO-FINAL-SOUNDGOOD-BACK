@@ -5,7 +5,7 @@ import { Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 export class Top10 {
     @PrimaryGeneratedColumn()
-    top10Id: number;
+    top10Id: number[];
 
     @ManyToMany(() => Canciones, (cancion) => cancion.top10Id)
     @JoinTable()

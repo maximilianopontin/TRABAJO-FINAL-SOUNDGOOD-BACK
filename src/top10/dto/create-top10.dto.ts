@@ -1,7 +1,10 @@
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
+import { CreateCancionesDto } from "src/canciones/dto/create-canciones.dto";
 
 export class CreateTop10Dto {
-    @IsNotEmpty()
-    @IsNumber({}, { each: true })
-    cancionId: number[];
+    @ApiProperty()
+    top10Id: number;
+  
+    @ApiProperty({ type: [CreateCancionesDto] })
+    cancionId: CreateCancionesDto[];
 }

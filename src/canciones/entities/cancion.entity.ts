@@ -28,7 +28,7 @@ export class Canciones {
   @Column({ nullable: true })
   imageFilename: string;
 
-  @ManyToMany(() => Artistas, artista => artista.canciones)
+  @ManyToMany(() => Artistas, artista => artista.canciones, { cascade: true })
   @JoinTable({
     name: 'cancion_artista',
     joinColumn: { name: 'cancionId', referencedColumnName: 'cancionId' },
@@ -36,10 +36,10 @@ export class Canciones {
   })
   artistas: Artistas[];
 
-  @ManyToOne(() => Genero, genero => genero.canciones)
+  @ManyToOne(() => Genero, genero => genero.canciones, { cascade: true })
   genero: Genero;
 
-  @ManyToMany(() => Favoritos, favorito => favorito.canciones)
+  @ManyToMany(() => Favoritos, favorito => favorito.canciones, { cascade: true })
   favoritos: Favoritos[];
 
   @ManyToMany(() => Playlists, playlist => playlist.canciones, { cascade: true })

@@ -12,9 +12,19 @@ export class Top10Controller {
     return this.top10Service.createTop10(cancionesId);
   }
 
-  @Get()
-  findAll() {
-    return this.top10Service.findAllTop10();
+  @Get('/todos')
+  async findAll() {
+    const top10 = await this.top10Service.findAllTop10();
+    return top10.map(item => ({
+      top10Id: item.top10Id,
+      canciones: item.canciones.map(cancion => ({
+        cancionId: cancion.cancionId,
+        titulo: cancion.titulo,
+        genero: cancion.genero,
+        songFilename: cancion.songFilename,
+        imageFilename: cancion.imageFilename,
+      })),
+    }));
   }
 
   @Patch(':id')

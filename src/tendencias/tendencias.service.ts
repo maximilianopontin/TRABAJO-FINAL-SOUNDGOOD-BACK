@@ -14,15 +14,15 @@ export class TendenciasService {
   ){}
 
   async createTendencia(cancionesId:number[]): Promise<Tendencia> {
-    if(cancionesId.length > 15){
-      throw new BadRequestException('Deben ser menos de 15 canciones');
+    if(cancionesId.length > 10){
+      throw new BadRequestException('Deben ser menos de 10 canciones');
     }
     const canciones = await this.cancionRepository.find({
       where: {cancionId: In(cancionesId) }
      });
 
-    if (canciones.length > 15) {
-      throw new Error('No puedes añadir más de 15 canciones a una tendencia.');
+    if (canciones.length > 10) {
+      throw new Error('No puedes añadir más de 10 canciones a una tendencia.');
     }
 
     const tendencia = this.tendenciaRepository.create({ canciones });
