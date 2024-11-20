@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Delete, Request, UseGuards} from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { AutenticacionGuard } from 'src/autenticacion/autenticacion.guard';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -12,31 +13,27 @@ export class UsuariosController {
     return this.usuariosService.findAllUsers();
   }
 
-  @Get(':id')
-  findOne(@Param('id', new ParseIntPipe({
-    errorHttpStatusCode:
-      HttpStatus.NOT_ACCEPTABLE
-  })
-  )
-  id: number,) {
-    return this.usuariosService.findOneUser(+id);
+ @UseGuards(AutenticacionGuard)
+  @Get('perfil')
+  findOne(@Request() req) {    
+    const userId = req.user.sub
+     // Obtenemos el userId desde el token de autenticación
+   return this.usuariosService.findOneUser(userId);
   }
   
-  @Patch(':id')
-  update(@Param('id', new ParseIntPipe({
-    errorHttpStatusCode:
-      HttpStatus.NOT_ACCEPTABLE
-  })) id: number,
-    @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuariosService.updateOneUser(id, updateUsuarioDto);
+  @UseGuards(AutenticacionGuard)
+  @Patch('perfil')
+  update(@Request() req, @Body() updateUsuarioDto: UpdateUsuarioDto) {
+    console.log(req);
+    const userId = req.user.sub
+    console.log('User ID from token:', userId); 
+    return this.usuariosService.updateOneUser(userId, updateUsuarioDto);
   }
 
-  @Delete(':id')
-  delete(@Param('id', new ParseIntPipe({
-    errorHttpStatusCode:
-      HttpStatus.NOT_ACCEPTABLE
-  })
-  ) id: number) {
-    return this.usuariosService.deleteOneUser(+id);
+  @UseGuards(AutenticacionGuard)
+  @Delete('perfil')
+  delete(@Request() req) {
+    const userId = req.user.sub; 
+    return this.usuariosService.deleteOneUser(userId);
   }
 }

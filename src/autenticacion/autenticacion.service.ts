@@ -64,7 +64,7 @@ export class AutenticacionService {
     //sino coincide la contraseña lanzamos excepcion
     if (!isAuthenticated)
       throw new UnauthorizedException('Invalid  Password');
-
+ 
     const payload = {
       //informacion del usuario que le agregamos al token
       sub: usuario.usuarioId,
