@@ -22,7 +22,7 @@ export class CancionesController {
     return this.cancionesService.findOneSong(id);
   }
 
-  // Buscar una canción por título http://localhost:3000/canciones/buscar/titulo?titulo=lud
+  // Buscar una canción por título http://localhost:8080/canciones/buscar/titulo?titulo=lud
   @Get('/buscar/titulo')
   findOneByTitle(@Query('titulo') titulo: string) {
     if (!titulo) {

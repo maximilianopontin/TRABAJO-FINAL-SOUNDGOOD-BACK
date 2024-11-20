@@ -4,7 +4,6 @@ import { UpdateTop10Dto } from './dto/update-top10.dto';
 import { In, Repository } from 'typeorm';
 import { Top10 } from './entities/top10.entity';
 import { Canciones } from 'src/canciones/entities/cancion.entity';
-import { elementAt } from 'rxjs';
 
 @Injectable()
 export class Top10Service {
@@ -23,7 +22,9 @@ export class Top10Service {
     const canciones = await this.cancionRepository.find({
       where: { cancionId: In(cancionesId) }
     });
+
     if (canciones.length !== 10) { //validacion para la cantidad de canciones
+
       throw new BadRequestException('Algunas de las canciones no existen en la base de datos.');
     }
     const nuevoTop10 = this.top10Repository.create({ canciones });
@@ -40,15 +41,7 @@ export class Top10Service {
     throw new NotFoundException('No se encontro ningun top 10')
   }
   else{
-    return top10.map(item => ({
-      top10Id: item.top10Id,
-      canciones: item.canciones.map(cancion => ({
-        titulo: cancion.titulo,
-        songFilename: cancion.songFilename,
-        imageFilename: cancion.imageFilename,
-        genero: cancion.genero ? cancion.genero: '', 
-      })),
-    }));
+    return top10
   }
   }
  
