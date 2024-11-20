@@ -10,6 +10,7 @@ export class ArtistasService {
     @Inject('ARTISTA_REPOSITORY')
     private artistaRepository: Repository<Artistas>
   ) { }
+  
 //Creamos un artista
   async createOneArtist(createArtistaDto: CreateArtistaDto): Promise<Artistas> {
     const artista = this.artistaRepository.create(createArtistaDto);
