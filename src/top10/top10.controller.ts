@@ -12,7 +12,7 @@ export class Top10Controller {
     return this.top10Service.createTop10(cancionesId);
   }
 
-  @Get()
+  @Get('todos')
   async findAll() {
   return await this.top10Service.findAllTop10();
    }
