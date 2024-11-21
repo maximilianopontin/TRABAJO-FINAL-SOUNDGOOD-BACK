@@ -51,11 +51,7 @@ export class Top10Service {
                 titulo: cancion.titulo,
                 songFilename: cancion.songFilename,
                 imageFilename: cancion.imageFilename,
-                genero: cancion.genero
-                    ? {
-                          nombre: cancion.genero.genero
-                      }
-                    : null,
+                genero: cancion.genero.genero,
                 artistas: cancion.artistas.map((artista) => ({
                     nombre: artista.nombre,
                 })),
