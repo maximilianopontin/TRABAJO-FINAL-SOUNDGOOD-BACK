@@ -18,12 +18,8 @@ export class Playlists {
     usuario: Usuario;
 
     //Una playlist puede contener varias canciones y Una canción puede aparecer en varias playlists. (Many-to-Many).
-    @ManyToMany(() => Canciones, cancion => cancion.playlists)
-    @JoinTable({
-        name: 'playlist_canciones', // Nombre de la tabla de unión
-        joinColumn: { name: 'playlistId', referencedColumnName: 'playlistId' }, // Ajustar columna de unión para favoritos
-        inverseJoinColumn: { name: 'cancionId', referencedColumnName: 'cancionId' }, // Ajustar columna de canciones
-    })
+    @ManyToMany(() => Canciones, canciones => canciones.playlists)
+    @JoinTable()
     canciones: Canciones[];
 }
 
