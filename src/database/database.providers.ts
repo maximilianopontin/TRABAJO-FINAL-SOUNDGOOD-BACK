@@ -11,15 +11,15 @@ export const databaseProviders = [
             // Crea una nueva instancia de DataSource con la configuración especificada
             const dataSource = new DataSource({
                 type: 'mysql',                // Tipo de base de datos (MySQL)
-                host: 'bx17b9g3igptpk7sfned-mysql.services.clever-cloud.com',            // Dirección del host de la base de datos
-                port: 3306,                   // Puerto en el que se ejecuta la base de datos
-                username: 'uu0ql1dd6vlfd2cy',             // Nombre de usuario para acceder a la base de datos
-                password: '4N2P7BSrmpwMPjc9X38p',             // Contraseña para acceder a la base de datos
-                database: 'bx17b9g3igptpk7sfned',     // Nombre de la base de datos a la que se conectará
+                host: process.env.ENVIRONMENT === 'dev' ? 'localhost' : 'bx17b9g3igptpk7sfned-mysql.services.clever-cloud.com',
+                port: 3306,
+                username: process.env.ENVIRONMENT === 'dev' ? 'root' : 'uu0ql1dd6vlfd2cy',
+                password: process.env.ENVIRONMENT === 'dev' ? 'Wrt123ma@' : '4N2P7BSrmpwMPjc9X38p',
+                database: process.env.ENVIRONMENT === 'dev' ? 'soundgood' : 'bx17b9g3igptpk7sfned',
                 entities: [
-                    __dirname + '/../**/*.entity{.ts,.js}', // Ruta donde se encuentran las entidades
+                    __dirname + '/../**/*.entity{.ts,.js}',
                 ],
-                synchronize: true,            // Sincroniza la base de datos con el esquema de las entidades en cada ejecución (útil solo en desarrollo)
+                synchronize: true,
             });
 
             // Inicializa la conexión al DataSource y devuelve la instancia inicializada

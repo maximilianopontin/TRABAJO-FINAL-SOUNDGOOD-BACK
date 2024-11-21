@@ -12,9 +12,11 @@ import { MercadoPagoController } from './mercadopago/mercadopago.controller';
 import { MercadopagoService } from './mercadopago/mercadopago.service';
 import { Top10Module } from './top10/top10.module';
 import { TendenciasModule } from './tendencias/tendencias.module';
+import { FilesController } from './files/files.controller';
+import { FilesModule } from './files/files.modules';
 
 @Module({
-  imports: [UsuariosModule, CancionesModule, ArtistasModule, GenerosModule, FavoritosModule, PlaylistsModule, AutenticacionModule, Top10Module, TendenciasModule],
+  imports: [UsuariosModule, CancionesModule, ArtistasModule, GenerosModule, FavoritosModule, PlaylistsModule, AutenticacionModule, Top10Module, TendenciasModule, FilesModule],
   controllers: [AppController, MercadoPagoController],
     
   providers: [AppService, MercadopagoService],

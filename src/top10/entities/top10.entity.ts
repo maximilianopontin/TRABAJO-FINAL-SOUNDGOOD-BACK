@@ -7,7 +7,7 @@ export class Top10 {
     @PrimaryGeneratedColumn()
     top10Id: number;
 
-    @ManyToMany(() => Canciones, (cancion) => cancion.top10Id)
+    @ManyToMany(() => Canciones, (cancion) => cancion.top10)
     @JoinTable()
     canciones: Canciones[];
 }

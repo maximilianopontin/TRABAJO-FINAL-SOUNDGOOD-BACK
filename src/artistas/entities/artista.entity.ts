@@ -12,7 +12,7 @@ export class Artistas {
     @Column( {length: 20})
     nombre: string;
 
-   @ManyToMany(() => Canciones, cancion => cancion.artistas, { cascade: true, onDelete: 'CASCADE' })
+   @ManyToMany(() => Canciones, cancion => cancion.artistas)
     canciones: Canciones[];
    
 
