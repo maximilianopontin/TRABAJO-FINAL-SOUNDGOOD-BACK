@@ -12,10 +12,11 @@ export class Top10Controller {
     return this.top10Service.createTop10(cancionesId);
   }
 
-  @Get()
-  findAll() {
-    return this.top10Service.findAllTop10();
-  }
+  @Get('todos')
+  async findAll() {
+  return await this.top10Service.findAllTop10();
+   }
+    
 
   @Patch(':id')
   update(@Param('id', new ParseIntPipe({
