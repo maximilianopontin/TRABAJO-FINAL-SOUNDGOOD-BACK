@@ -1,10 +1,8 @@
 import { BadRequestException, Inject, Injectable, NotFoundException, Param } from '@nestjs/common';
-import { CreateTop10Dto } from './dto/create-top10.dto';
 import { UpdateTop10Dto } from './dto/update-top10.dto';
 import { In, Repository } from 'typeorm';
 import { Top10 } from './entities/top10.entity';
 import { Canciones } from 'src/canciones/entities/cancion.entity';
-import { CancionesDto } from 'src/canciones/dto/canciones.dto';
 import { plainToInstance } from 'class-transformer';
 import { Top10Dto } from './dto/top10.dto';
 
@@ -57,7 +55,6 @@ export class Top10Service {
                 })),
             })),
         }));
-        console.log(top10Dtos)
 
         return plainToInstance(Top10Dto, top10Dtos);
     } catch (error) {

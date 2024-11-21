@@ -13,8 +13,8 @@ export class TendenciasController {
   }
 
   @Get()
-  findAll() {
-    return this.tendenciasService.findAllTendencia();
+  async findAll() {
+    return await this.tendenciasService.findAllTendencia();
   }
 
   @Patch(':id')
