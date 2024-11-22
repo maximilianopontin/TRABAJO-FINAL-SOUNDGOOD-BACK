@@ -5,8 +5,6 @@ import { UpdateCancionesDto } from './dto/update-canciones.dto';
 import { AutenticacionGuard } from '../autenticacion/autenticacion.guard';
 import { FilesInterceptor } from '../interceptors/file.intercerptor';
 import { ApiResponse } from '@nestjs/swagger';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
-
 
 @Controller('canciones')
 export class CancionesController {
@@ -49,7 +47,7 @@ export class CancionesController {
     if (!files || (!files.songFile && !files.imageFile)) {
       throw new BadRequestException('Se requieren ambos archivos: la canción y la imagen.');
     }
-  
+
     // Asignar los nombres de archivo al DTO, si existen
     if (files.songFile && files.songFile[0]) {
       createCancionesDto.songFilename = files.songFile[0].filename; // Nombre del archivo de la canción
@@ -63,8 +61,7 @@ export class CancionesController {
 
   // Actualizar una canción existente por id
   @Patch('/:id')
-  @UseInterceptors(FilesInterceptor.getInterceptor(),
-  )
+  @UseInterceptors(FilesInterceptor.getInterceptor(),)
   update(
     @UploadedFiles() files: { songFile?: Express.Multer.File[], imageFile?: Express.Multer.File[] },
 
@@ -75,16 +72,15 @@ export class CancionesController {
       throw new BadRequestException('El archivo es requerido');
     }
     // Si se proporciona un nuevo archivo de canción, actualiza el filename
-    updateCancionDto.songFilename = files[0].filename;
+    updateCancionDto.songFilename = files[0].songFile;
 
     // Si se proporciona una nueva imagen, actualiza el imageFilename
     if (!files) {
-      updateCancionDto.imageFilename = files[0].filename;
+      updateCancionDto.imageFilename = files[0].imageFile;
     }
     // Llama al servicio para actualizar la canción con los datos proporcionados
     return this.cancionesService.updateOneCancion(id, updateCancionDto);
   }
-
 
   // Eliminar una canción por id
   @Delete('/:id')
