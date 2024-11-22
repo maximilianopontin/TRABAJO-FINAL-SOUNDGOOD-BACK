@@ -75,11 +75,11 @@ export class CancionesController {
       throw new BadRequestException('El archivo es requerido');
     }
     // Si se proporciona un nuevo archivo de canción, actualiza el filename
-    updateCancionDto.songFilename = files[0].filename;
+    updateCancionDto.songFilename = files.songFile[0].filename;
 
     // Si se proporciona una nueva imagen, actualiza el imageFilename
     if (!files) {
-      updateCancionDto.imageFilename = files[0].filename;
+      updateCancionDto.imageFilename = files.imageFile[0].filename;
     }
     // Llama al servicio para actualizar la canción con los datos proporcionados
     return this.cancionesService.updateOneCancion(id, updateCancionDto);
