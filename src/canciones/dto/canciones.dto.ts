@@ -1,10 +1,17 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
-import { IsString, Length, IsNotEmpty, IsArray, IsOptional} from "class-validator";
+import { Expose, Type } from "class-transformer";
+import { IsString, Length, IsNotEmpty, IsArray, IsOptional, IsNumber} from "class-validator";
 import { ArtistaDto } from "src/artistas/dto/artista.dto";
 import { GeneroDto } from "src/generos/dto/genero.dto";
 
 export class CancionesDto {
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsNumber()
+    @Type(() => Number)
+    @Expose()
+    cancionId:number
+
     @ApiProperty()
     @IsNotEmpty()
     @IsString()

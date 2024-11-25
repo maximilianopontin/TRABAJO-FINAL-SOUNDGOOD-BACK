@@ -31,14 +31,12 @@ export class CancionesController {
 
   // Crear una nueva canción con archivo
   //inyectar decorador useguards
-  @UseGuards(AutenticacionGuard)
-
+  
   @Post()
+  @UseGuards(AutenticacionGuard)
   @ApiResponse({ status: 201, description: 'El registro se ha creado correctamente.' })
   @ApiResponse({ status: 403, description: 'Prohibido.' })
-  @UseInterceptors(FilesInterceptor.getInterceptor(),
-
-  )
+  @UseInterceptors(FilesInterceptor.getInterceptor(),)
   createOne(
     @UploadedFiles() files: { songFile?: Express.Multer.File[], imageFile?: Express.Multer.File[] },
 

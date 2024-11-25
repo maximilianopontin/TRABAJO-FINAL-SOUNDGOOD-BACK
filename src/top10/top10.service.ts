@@ -46,6 +46,7 @@ export class Top10Service {
         const top10Dtos = top10Results.map((top10) => ({
             top10Id: top10.top10Id, 
             cancionId: top10.canciones.map((cancion) => ({
+              cancionId: cancion.cancionId,
                 titulo: cancion.titulo,
                 songFilename: cancion.songFilename,
                 imageFilename: cancion.imageFilename,

@@ -44,6 +44,7 @@ export class TendenciasService {
       const tendenciaDto = tendenciasResults.map((tendencias) => ({
         tendenciasId: tendencias.tendenciasId,
         cancionId: tendencias.canciones.map((cancion) => ({
+          cancionId: cancion.cancionId,
           titulo: cancion.titulo,
           songFilename: cancion.songFilename,
           imageFilename: cancion.imageFilename,
