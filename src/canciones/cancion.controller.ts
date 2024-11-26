@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, BadRequestException, HttpStatus, ParseIntPipe, Query, UploadedFiles, UseInterceptors, } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, BadRequestException, HttpStatus, ParseIntPipe, Query, UploadedFiles, UseInterceptors, Request } from '@nestjs/common';
 import { CancionesService } from './cancion.service';
 import { CreateCancionesDto } from './dto/create-canciones.dto';
 import { UpdateCancionesDto } from './dto/update-canciones.dto';
@@ -37,7 +37,7 @@ export class CancionesController {
   }
 
   @Get('top10')
- findTop10(): Promise<CancionesDto[]> {
+  findTop10(): Promise<CancionesDto[]> {
     return this.cancionesService.findTop10();
   }
 
@@ -114,20 +114,18 @@ export class CancionesController {
     return this.cancionesService.remove(id);
   }
 
-  @Post(':cancionId/usuarios/:usuarioId')
-  async addUsuarioToCancion(
-      @Param('cancionId', ParseIntPipe) cancionId: number,
-      @Param('usuarioId', ParseIntPipe) usuarioId: number,
-  ): Promise<void> {
-      return this.cancionesService.addUsuarioToCancion(cancionId, usuarioId);
+  @Post('favoritos/:cancionId')
+  @UseGuards(AutenticacionGuard)
+  addUsuarioToCancion(@Param('cancionId', ParseIntPipe) cancionId: number, @Request() req): Promise<void> {
+    const userId = req.user.sub
+    return this.cancionesService.addUsuarioToCancion(cancionId, userId);
   }
 
-  @Delete(':cancionId/usuarios/:usuarioId')
-  async removeUsuarioFromCancion(
-      @Param('cancionId', ParseIntPipe) cancionId: number,
-      @Param('usuarioId', ParseIntPipe) usuarioId: number,
-  ): Promise<void> {
-      return this.cancionesService.removeUsuarioFromCancion(cancionId, usuarioId);
+  @Delete('favoritos/:cancionId')
+  @UseGuards(AutenticacionGuard)
+  removeUsuarioFromCancion(@Param('cancionId', ParseIntPipe) cancionId: number, @Request() req): Promise<void> {
+    const userId = req.user.sub
+    return this.cancionesService.removeUsuarioFromCancion(cancionId, userId);
   }
 }
 
