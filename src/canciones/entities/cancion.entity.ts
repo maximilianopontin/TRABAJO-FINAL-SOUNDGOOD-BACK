@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { Artistas } from 'src/artistas/entities/artista.entity';
 import { Genero } from 'src/generos/entities/genero.entity';
 import { Favoritos } from 'src/favoritos/entities/favorito.entity';
@@ -39,7 +39,7 @@ export class Canciones {
   @ManyToOne(() => Genero, genero => genero.canciones, { cascade: true })
   genero: Genero;
 
-  @ManyToMany(() => Favoritos, favorito => favorito.canciones, { cascade: true })
+  @OneToMany(() => Favoritos, favorito => favorito.cancion, { cascade: true })
   favoritos: Favoritos[];
 
   @ManyToMany(() => Playlists, playlist => playlist.canciones, { cascade: true })

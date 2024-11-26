@@ -1,6 +1,6 @@
 
 import { Favoritos } from 'src/favoritos/entities/favorito.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany, OneToOne } from 'typeorm';
 import { Playlists } from 'src/playlists/entities/playlist.entity';
 
 // El decorador @Entity indica que esta clase representa una entidad en la base de datos
@@ -31,7 +31,7 @@ export class Usuario {
     contraseña: string
 
     //relacion con favoritos
-    @ManyToMany(() => Favoritos, favorito => favorito.usuarios)
+    @OneToMany(() => Favoritos, favorito => favorito.usuario, {cascade:true})
     favoritos: Favoritos[]
 
     @OneToMany(() => Playlists, playlist => playlist.usuario)

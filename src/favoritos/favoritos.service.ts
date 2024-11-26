@@ -18,33 +18,51 @@ export class FavoritosService {
   ) { }
 
   //Crear favoritos
-  async createOneFavorite(createFavoritoDto: CreateFavoritoDto): Promise<Favoritos> {
-    const { usuarioId, cancionId, ...favoritoData } = createFavoritoDto
-    //Se busca al usuario en la base de datos usando el usuarioId
+  async createOneFavorite(createFavoritoDto: CreateFavoritoDto) {
+    const { usuarioId, cancionId } = createFavoritoDto;
+  
+    // Buscar usuario por ID
     const usuario = await this.usuarioRepository.findOne({
-      where: { usuarioId }
+      where: { usuarioId },
     });
-
+  
     if (!usuario) {
       throw new Error('Usuario no encontrado');
     }
-    //Si el usuario existe, se crea un nuevo favorito
+  
+    // Buscar canción por ID
+    const cancion = await this.cancionRepository.findOne({
+      where: { cancionId: cancionId },
+    });
+  
+    if (!cancion) {
+      throw new Error('Canción no encontrada');
+    }
+  
+    // Crear y guardar el favorito
     const favorito = this.favoritoRepository.create({
-      ...favoritoData,
-      usuarios: [usuario], // Aquí usuarios se añade a un array de usuario
-      //cancionId es un array de varios valores, así que se procesa cada canción y se añade correctamente a la relación.
-      canciones: cancionId.map(id => ({ cancionId: id }))//mapeando cancionId a objetos que contienen solo cancionId.
-    });//se crea un array de objetos que representan las canciones, donde cada objeto tiene una propiedad cancionId
-    return this.favoritoRepository.save(favorito);
+      usuario,
+      cancion,
+    });
+    this.favoritoRepository.save(favorito);
+    return { "message": "Favorito creado de forma correcta"}
   }
+  
 
   //Trae todos los favoritos de la base de datos, incluyendo las relaciones con usuarios y canciones 
-  async findAllFavorites(): Promise<Favoritos[]> {
-    const favorito = await this.favoritoRepository.find({
+  async findAllFavorites(idUser: number) {
+    const favoritos = await this.favoritoRepository.find({
+      where: {
+        usuario: {
+          usuarioId: idUser,
+        },
+      },
       relations: ['usuarios', 'canciones']
     });
-    if (!favorito.length) throw new NotFoundException("no favorites found in database");
-    return favorito;
+    if (!favoritos.length) throw new NotFoundException("no favorites found in database");
+
+    return favoritos;
+
   }
 
   async findOneFavorite(id: number) {
@@ -52,70 +70,39 @@ export class FavoritosService {
       where: { favoritoId: id },
       relations: ['canciones', 'usuarios']
     });
-    if(!favorito){
+    if (!favorito) {
       throw new NotFoundException(`El favorito con ID ${id} no se encontro`);
 
     }
     return favorito;
   }
-  async updateFavorite(favoritoId: number, updateFavoritoDto: UpdateFavoritoDto): Promise<Favoritos> {
-    const { usuarioId, cancionId, ...updateFields } = updateFavoritoDto;
-  
-    // Buscar el favorito por su ID y cargar las relaciones existentes
+ 
+  //eliminar un favorito
+  async removeFavorite(cancionId: number, userId: number): Promise<any> {
+    // Buscar el favorito basado en el ID de la canción y el usuario
     const favorito = await this.favoritoRepository.findOne({
-      where: { favoritoId },
-      relations: ['canciones', 'usuarios'],
+      where: {
+        cancion: {
+          cancionId: cancionId,
+        },
+        usuario: {
+          usuarioId: userId,
+        },
+      },
+      relations: ['cancion', 'usuario'],
     });
   
     if (!favorito) {
-      throw new NotFoundException(`El favorito con ID ${favoritoId} no existe.`);
+      throw new NotFoundException(
+        `El favorito con la canción ID ${cancionId} no se encontró para el usuario ID ${userId}`,
+      );
     }
   
-    // Si el usuarioId existe en el DTO, buscar el nuevo usuario
-    if (usuarioId) {
-      const usuario = await this.usuarioRepository.findOne({
-        where: { usuarioId },
-      });
+    // Eliminar el favorito encontrado
+    await this.favoritoRepository.delete(favorito.favoritoId);
   
-      if (!usuario) {
-        throw new NotFoundException('Usuario no encontrado');
-      }
-  
-      // Asignar el nuevo usuario al favorito
-      favorito.usuarios = [usuario];
-    }
-  
-    // Si cancionId existe en el DTO y tiene canciones, buscar las nuevas canciones
-    if (cancionId && cancionId.length > 0) {
-      const canciones = await this.cancionRepository
-        .createQueryBuilder('cancion')
-        .where('cancion.cancionId IN (:...ids)', { ids: cancionId })
-        .getMany();
-  
-      // Verificar si todas las canciones fueron encontradas
-      if (!canciones || canciones.length !== cancionId.length) {
-        throw new NotFoundException('Algunas de las canciones no se encontraron');
-      }
-  
-      // Asignar las nuevas canciones al favorito
-      favorito.canciones = canciones;
-    }
-  
-    // Actualizar cualquier otro campo del favorito
-    Object.assign(favorito, updateFields);
-  
-    // Guardar los cambios en el favorito
-    return await this.favoritoRepository.save(favorito);
+    return { message: `El favorito asociado a la canción ID ${cancionId} fue eliminado` };
   }
   
 
-  //eliminar un favorito
-  async removeFavorite(id: number): Promise<any> {
-    const result = await this.favoritoRepository.delete(id);
-    if(!result){
-      throw new NotFoundException(`El favorito con ID ${id} no se encontro`);
-    } 
-    return { message: `El favorito con ${id} fue eliminado` }
-  
-  }
 }

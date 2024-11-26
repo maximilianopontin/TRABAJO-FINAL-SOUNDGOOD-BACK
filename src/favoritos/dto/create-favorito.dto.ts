@@ -5,11 +5,11 @@ export class CreateFavoritoDto {
     @ApiProperty()
     @IsNotEmpty()
     @IsNumber()
-    usuarioId?: number;
+    usuarioId: number;
     
     @ApiProperty()
     @IsArray()
     @IsNumber({}, { each: true })
-    cancionId?: number[];
+    cancionId: number;
     
 }
