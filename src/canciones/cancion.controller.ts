@@ -4,7 +4,9 @@ import { CreateCancionesDto } from './dto/create-canciones.dto';
 import { UpdateCancionesDto } from './dto/update-canciones.dto';
 import { AutenticacionGuard } from '../autenticacion/autenticacion.guard';
 import { FilesInterceptor } from '../interceptors/file.intercerptor';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { CancionesDto } from './dto/canciones.dto';
+import { UpdatePropertyDto } from './dto/update-property.dto';
 
 @Controller('canciones')
 export class CancionesController {
@@ -15,13 +17,13 @@ export class CancionesController {
   }
 
   // Obtener una canción por id
-  @Get('/:id')
+  @Get('one/:id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.cancionesService.findOneSong(id);
   }
 
   // Buscar una canción por título http://localhost:8080/canciones/buscar/titulo?titulo=lud
-  @Get('/buscar/titulo')
+  @Get('buscar/titulo')
   findOneByTitle(@Query('titulo') titulo: string) {
     if (!titulo) {
       throw new BadRequestException(`la cancion ${titulo} no existe`);
@@ -29,9 +31,19 @@ export class CancionesController {
     return this.cancionesService.findOneSongByTitle(titulo);
   }
 
+  @Get('tendencias')
+  findTendencias(): Promise<CancionesDto[]> {
+    return this.cancionesService.findTendencias();
+  }
+
+  @Get('top10')
+ findTop10(): Promise<CancionesDto[]> {
+    return this.cancionesService.findTop10();
+  }
+
   // Crear una nueva canción con archivo
   //inyectar decorador useguards
-  
+
   @Post()
   @UseGuards(AutenticacionGuard)
   @ApiResponse({ status: 201, description: 'El registro se ha creado correctamente.' })
@@ -81,10 +93,41 @@ export class CancionesController {
     return this.cancionesService.updateOneCancion(id, updateCancionDto);
   }
 
+
+  @Patch('tendencias/:id')
+  @ApiParam({ name: 'id', description: 'ID de la canción' })
+  @ApiBody({ type: UpdatePropertyDto, description: 'Actualización de la propiedad "tendencias"' })
+  async updateTendencias(@Param('id') id: number, @Body() body: UpdatePropertyDto): Promise<void> {
+    return this.cancionesService.updateTendencias(id, body.value);
+  }
+
+  @Patch('top10/:id')
+  @ApiParam({ name: 'id', description: 'ID de la canción' })
+  @ApiBody({ type: UpdatePropertyDto, description: 'Actualización de la propiedad "top10"' })
+  async updateTop10(@Param('id') id: number, @Body() body: UpdatePropertyDto): Promise<void> {
+    return this.cancionesService.updateTop10(id, body.value);
+  }
+
   // Eliminar una canción por id
   @Delete('/:id')
   deleteOne(@Param('id', ParseIntPipe) id: number) {
     return this.cancionesService.remove(id);
+  }
+
+  @Post(':cancionId/usuarios/:usuarioId')
+  async addUsuarioToCancion(
+      @Param('cancionId', ParseIntPipe) cancionId: number,
+      @Param('usuarioId', ParseIntPipe) usuarioId: number,
+  ): Promise<void> {
+      return this.cancionesService.addUsuarioToCancion(cancionId, usuarioId);
+  }
+
+  @Delete(':cancionId/usuarios/:usuarioId')
+  async removeUsuarioFromCancion(
+      @Param('cancionId', ParseIntPipe) cancionId: number,
+      @Param('usuarioId', ParseIntPipe) usuarioId: number,
+  ): Promise<void> {
+      return this.cancionesService.removeUsuarioFromCancion(cancionId, usuarioId);
   }
 }
 

@@ -1,7 +1,6 @@
-
-import { Favoritos } from 'src/favoritos/entities/favorito.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany, OneToOne } from 'typeorm';
 import { Playlists } from 'src/playlists/entities/playlist.entity';
+import { Canciones } from 'src/canciones/entities/cancion.entity';
 
 // El decorador @Entity indica que esta clase representa una entidad en la base de datos
 @Entity()
@@ -30,11 +29,10 @@ export class Usuario {
     @Column('varchar', { length: 60 })
     contraseña: string
 
-    //relacion con favoritos
-    @OneToMany(() => Favoritos, favorito => favorito.usuario, {cascade:true})
-    favoritos: Favoritos[]
-
     @OneToMany(() => Playlists, playlist => playlist.usuario)
     playlists: Playlists[];
     //Un usuario puede crear varias playlists (One-to-Many).
+
+    @ManyToMany(() => Canciones, cancion => cancion.usuario)
+    canciones: Canciones[];
 }

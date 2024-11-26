@@ -2,6 +2,7 @@ import { Injectable, Inject, NotFoundException, Param } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Usuario } from './entities/usuario.entity';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { UsuarioDto } from './dto/usuario.dto';
 
 @Injectable()
 export class UsuariosService {
@@ -10,13 +11,13 @@ export class UsuariosService {
         private usuarioRepository: Repository<Usuario>
     ) { }
 
-    async findAllUsers(): Promise<Usuario[]> {
+    async findAllUsers(): Promise<UsuarioDto[]> {
         const usuario = await this.usuarioRepository.find();
         if (!usuario.length) throw new NotFoundException("no usuario in database");
         return await this.usuarioRepository.find();
     }
 
-    async findOneUser(userId: number): Promise<Usuario> {
+    async findOneUser(userId: number): Promise<UsuarioDto> {
         const user = await this.usuarioRepository.findOne({
             where: { usuarioId: userId }
         }); //para buscar un usuario con un ID específico. Esto asegura que se busque el usuario correcto en función del parámetro userId.
@@ -24,21 +25,21 @@ export class UsuariosService {
         return user;
     }
 
-    async updateOneUser(userId: number, updateUsuarioDto: UpdateUsuarioDto): Promise<any> {
+    async updateOneUser(userId: number, updateUsuarioDto: UpdateUsuarioDto): Promise<UsuarioDto> {
         // Utilizamos preload para cargar la entidad de usuario con los nuevos datos
         const newUsuario = await this.usuarioRepository.preload({
             usuarioId: userId, // El userId ahora proviene del token, no de la URL
-          ...updateUsuarioDto,  // Se rellenan los campos del DTO en la entidad
+            ...updateUsuarioDto,  // Se rellenan los campos del DTO en la entidad
         });
-      
+
         // Si no se encuentra el usuario, lanzamos una excepción
         if (!newUsuario) {
-          throw new NotFoundException(`El usuario con id ${userId} no existe.`);
+            throw new NotFoundException(`El usuario con id ${userId} no existe.`);
         }
-      
+
         // Guardamos los cambios en la base de datos
         return this.usuarioRepository.save(newUsuario);
-      }
+    }
 
     async deleteOneUser(@Param('id') userId: number): Promise<any> {
         // busca el usuario por su ID

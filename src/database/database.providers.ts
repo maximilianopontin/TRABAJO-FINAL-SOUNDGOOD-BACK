@@ -14,7 +14,7 @@ export const databaseProviders = [
                 host: process.env.ENVIRONMENT === 'dev' ? 'localhost' : 'bx17b9g3igptpk7sfned-mysql.services.clever-cloud.com',
                 port: 3306,
                 username: process.env.ENVIRONMENT === 'dev' ? 'root' : 'uu0ql1dd6vlfd2cy',
-                password: process.env.ENVIRONMENT === 'dev' ? '1234' : '4N2P7BSrmpwMPjc9X38p',
+                password: process.env.ENVIRONMENT === 'dev' ? '' : '4N2P7BSrmpwMPjc9X38p',
                 database: process.env.ENVIRONMENT === 'dev' ? 'soundgood' : 'bx17b9g3igptpk7sfned',
                 entities: [
                     __dirname + '/../**/*.entity{.ts,.js}',

@@ -2,11 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as cors from 'cors';
-
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'; //permite documentar y probar nuestra app de manera tal que el cliente tenga una interaccion real con el proyecto
-
-
-
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
