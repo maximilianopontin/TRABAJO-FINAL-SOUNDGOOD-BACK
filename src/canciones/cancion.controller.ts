@@ -127,6 +127,13 @@ export class CancionesController {
     const userId = req.user.sub
     return this.cancionesService.removeUsuarioFromCancion(cancionId, userId);
   }
+
+  @Get('favoritosByUser')
+  @UseGuards(AutenticacionGuard)
+  favoritesUsuarioFromCancion(@Request() req): Promise<CancionesDto[]> {
+    const userId = req.user.sub
+    return this.cancionesService.favoritesUsuarioFromCancion(userId);
+  }
 }
 
 

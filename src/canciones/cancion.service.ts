@@ -7,6 +7,7 @@ import { UpdateCancionesDto } from './dto/update-canciones.dto';
 import { Artistas } from 'src/artistas/entities/artista.entity';
 import { CancionesDto } from './dto/canciones.dto';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
+import { plainToClass, plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class CancionesService {
@@ -206,4 +207,18 @@ async removeUsuarioFromCancion(cancionId: number, usuarioId: number): Promise<vo
     cancion.usuario = cancion.usuario.filter((user) => user.usuarioId !== usuarioId);
     await this.cancionRepository.save(cancion);
 }
+
+async favoritesUsuarioFromCancion(userID: number): Promise<CancionesDto[]> {
+  const canciones = await this.cancionRepository
+  //necesito filtrar las canciones por el id del usuario
+    .createQueryBuilder('cancion')
+    .innerJoin('cancion.usuario', 'usuario', 'usuarioId = :userID', { userID })
+    .leftJoinAndSelect('cancion.genero', 'genero')
+    .leftJoinAndSelect('cancion.artistas', 'artistas')
+    .getMany();
+
+  // Transforma los resultados a CancionesDto
+  return plainToInstance(CancionesDto, canciones);
 }
+}
+
