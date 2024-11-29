@@ -13,7 +13,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { FilesModule } from './files/files.modules';
 import { HealthModule } from './health/health.module';
-/*
+
 @Module({
   imports: [ ThrottlerModule.forRoot([
     {
@@ -31,13 +31,5 @@ import { HealthModule } from './health/health.module';
     
 
 })
-export class AppModule {}*/
-@Module({
-  imports: [UsuariosModule, CancionesModule, ArtistasModule, GenerosModule, PlaylistsModule, AutenticacionModule, FilesModule],
-  controllers: [AppController, MercadoPagoController],
-    
-  providers: [AppService, MercadopagoService],
-    
-
-})
 export class AppModule {}
+
