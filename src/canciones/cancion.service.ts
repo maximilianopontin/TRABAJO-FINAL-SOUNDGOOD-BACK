@@ -165,7 +165,7 @@ async updateTop10(id: number, value: boolean): Promise<any> {
   async addUsuarioToCancion(cancionId: number, usuarioId: number): Promise<void> {
     const cancion = await this.cancionRepository.findOne({
         where: { cancionId },
-        relations: ['usuarios'], // Asegura cargar la relación
+        relations: ['usuario'], // Asegura cargar la relación
     });
 
     if (!cancion) {
@@ -188,7 +188,7 @@ async updateTop10(id: number, value: boolean): Promise<any> {
 async removeUsuarioFromCancion(cancionId: number, usuarioId: number): Promise<void> {
     const cancion = await this.cancionRepository.findOne({
         where: { cancionId },
-        relations: ['usuarios'], // Asegura cargar la relación
+        relations: ['usuario'], // Asegura cargar la relación
     });
 
     if (!cancion) {
@@ -211,10 +211,10 @@ async removeUsuarioFromCancion(cancionId: number, usuarioId: number): Promise<vo
 async favoritesUsuarioFromCancion(userID: number): Promise<CancionesDto[]> {
   const canciones = await this.cancionRepository
   //necesito filtrar las canciones por el id del usuario
-    .createQueryBuilder('cancion')
-    .innerJoin('cancion.usuario', 'usuario', 'usuarioId = :userID', { userID })
-    .leftJoinAndSelect('cancion.genero', 'genero')
-    .leftJoinAndSelect('cancion.artistas', 'artistas')
+    .createQueryBuilder('canciones')
+    .innerJoin('canciones.usuario', 'usuario', 'usuarioId = :userID', { userID })
+    .leftJoinAndSelect('canciones.genero', 'genero')
+    .leftJoinAndSelect('canciones.artistas', 'artistas')
     .getMany();
 
   // Transforma los resultados a CancionesDto

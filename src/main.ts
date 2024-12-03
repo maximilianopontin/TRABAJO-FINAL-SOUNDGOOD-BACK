@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import helmet from 'helmet';
+//import helmet from 'helmet';
 import * as cors from 'cors';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'; //permite documentar y probar nuestra app de manera tal que el cliente tenga una interaccion real con el proyecto
 
@@ -32,7 +32,7 @@ async function bootstrap() {
   
   app.enableCors();
   app.use(cors()); // Habilitar CORS
-  app.use(helmet()); 
+ // app.use(helmet()); 
   await app.listen(8080);//cambio a puerto 8080 para desarrollo
 
 }
