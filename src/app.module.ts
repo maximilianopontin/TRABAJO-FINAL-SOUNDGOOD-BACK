@@ -19,7 +19,7 @@ import { HealthModule } from './health/health.module';
     {
       //name podemos agregarle nombre con la cantidad de peticion que le permito por minuto, esto en caso de que necesitemos distintos limites para las solictudes
       ttl: 60000,// ttl Tiempo de vida en segundos para la limitación de solicitudes (60 segundos)
-      limit: 10, // limit Número máximo de solicitudes permitidas por IP en el periodo de tiempo (10 solicitudes)
+      limit: 50, // limit Número máximo de solicitudes permitidas por IP en el periodo de tiempo (50 solicitudes)
     },
   ]),
     UsuariosModule, CancionesModule, ArtistasModule, GenerosModule, PlaylistsModule, AutenticacionModule, FilesModule,HealthModule],
