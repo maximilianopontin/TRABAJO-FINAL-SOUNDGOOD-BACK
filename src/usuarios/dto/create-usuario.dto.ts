@@ -3,6 +3,12 @@ import { Type } from 'class-transformer';
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateUsuarioDto {
+  
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  usuarioId?: number;
+
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
