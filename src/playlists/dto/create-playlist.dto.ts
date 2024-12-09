@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
  
 export class CreatePlaylistDto {
     @ApiProperty()
@@ -8,15 +8,9 @@ export class CreatePlaylistDto {
     title: string;
 
     @ApiProperty()
-    @IsNotEmpty()
+    @IsOptional()
     @IsNumber()
-    usuarioId: number;
-
-    @ApiProperty()
-    @IsArray()
-    @IsNumber({}, { each: true })
-    cancionId: number[];
-
+    usuarioId?: number;
 }
 
 

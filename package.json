@@ -27,6 +27,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^10.4.6",
     "@nestjs/swagger": "^8.0.0",
+    "@nestjs/throttler": "^6.2.1",
     "@types/mercadopago": "^1.5.11",
     "bcrypt": "^5.1.1",
     "class": "^0.1.4",

@@ -1,12 +1,13 @@
-import { Injectable, Inject, NotFoundException, BadRequestException, Param, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, BadRequestException, Param, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
 import { Repository, Like } from 'typeorm';
 import { Playlists } from './entities/playlist.entity';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { Canciones } from 'src/canciones/entities/cancion.entity';
+import { PlaylistCancionesDto, PlaylistDto } from './dto/playlist.dto';
 
-@Injectable() 
+@Injectable()
 export class PlaylistsService {
   constructor(
     @Inject('PLAYLIST_REPOSITORY')
@@ -17,8 +18,9 @@ export class PlaylistsService {
     private cancionRepository: Repository<Canciones>,
   ) { }
 
-  async createOnePlaylist(createPlaylistDto: CreatePlaylistDto): Promise<Playlists> {
-    const { usuarioId, cancionId, ...restData } = createPlaylistDto;
+  //creamos la playlist del usuario
+    async createOnePlaylist(createPlaylistDto: CreatePlaylistDto): Promise<Playlists> {
+    const { usuarioId, ...restData } = createPlaylistDto;
     //1. Se busca al usuario en la base de datos usando el usuarioId
     const usuario = await this.usuarioRepository.findOne({
       where: { usuarioId }
@@ -26,52 +28,56 @@ export class PlaylistsService {
     if (!usuario) {
       throw new Error('Usuario no encontrado');
     }
-
-    // 2. Validamos que todas las canciones existen
-    const canciones = await this.cancionRepository.findByIds(cancionId); // Busca las canciones por sus IDs
-    if (canciones.length !== cancionId.length) {
-      throw new NotFoundException('Una o más canciones no fueron encontradas');
-    }
-
-    //Si el usuario y la cancion existe, se crea una nueva playlist
+    //Si el usuario, se crea una nueva playlist
     const playlist = this.playlistRepository.create({
       ...restData,
       usuario: usuario, // Usar el objeto de usuario
-      //cancionId es un array de varios valores, así que se procesa cada canción y se añade correctamente a la relación.
-      canciones: cancionId.map(id => ({ cancionId: id }))//mapeando cancionId a objetos que contienen solo cancionId.
-    });//se crea un array de objetos que representan las canciones, donde cada objeto tiene una propiedad cancionId
+    });
     return this.playlistRepository.save(playlist);
-
   }
 
-  async findAllPlaylists(): Promise<Playlists[]> {
-    //Trae todos las playlists de la base de datos, incluyendo las relaciones con usuarios y canciones 
+  //trae las playlist del usuario
+  async findAllPlaylists(usuarioId: number): Promise<PlaylistDto[]> {
     const playlist = await this.playlistRepository.find({
-      relations: ['usuario', 'canciones']
+      where: { usuario: { usuarioId } },// Filtramos por el id del usuario
+      relations: ['usuario']
     });
     if (!playlist.length) throw new NotFoundException("no playlists found in database");
     return playlist;
-
   }
 
-
-  async findOnePlaylist(@Param('id') playlistId: number): Promise<Playlists> {
+  //Trae las canciones de las playlists
+  async findOnePlaylist(
+    playlistId: number,
+    usuarioId: number
+  ): Promise<PlaylistCancionesDto> {
+    // Busca la playlist con las relaciones necesarias
     const playlist = await this.playlistRepository.findOne({
       where: { playlistId },
-      relations: ['usuario', 'canciones'], // Agregamos las relaciones
+      relations: ['usuario', 'canciones'], // Incluye las relaciones con 'usuario' y 'canciones'
     });
-    if (!playlist) throw new NotFoundException(`la playlist con id: ${playlistId} no se encuentra`);
+  
+    // Valida que la playlist exista
+    if (!playlist) {
+      throw new NotFoundException(`La playlist con id: ${playlistId} no se encuentra`);
+    }
+  
+    // Valida que el usuario sea el dueño de la playlist
+    if (playlist.usuario.usuarioId !== usuarioId) {
+      throw new UnauthorizedException(
+        `El usuario con id: ${usuarioId} no tiene acceso a la playlist con id: ${playlistId}`
+      );
+    }
+  
     return playlist;
   }
+  
 
   async findPlaylistByTitle(title: string): Promise<Playlists[]> {
-
     const trimmedTitle = title.replace(/\s+/g, '');//expresión regular elimina todos los espacios en blanco dentro del título.
-
     if (!trimmedTitle) {
       throw new BadRequestException('El título proporcionado no es válido');
     }//Si el título queda vacío, se lanza una excepción de tipo BadRequestException 
-
     try {
       //QueryBuilder de TypeORM para realizar la búsqueda en la base de datos
       const playlists = await this.playlistRepository
@@ -87,7 +93,6 @@ export class PlaylistsService {
         throw new NotFoundException(`No se encontraron playlists con el título: ${title}`); // Error 404: No encontrado
       }
       return playlists;
-
     } catch (error) {
       // Si el error es una excepción conocida (BadRequest, NotFound), dejar que siga su curso
       if (error instanceof BadRequestException || error instanceof NotFoundException) {
@@ -98,38 +103,6 @@ export class PlaylistsService {
     }
   }
 
-
-  async updateOnePlaylist( playlistId: number, updatePlaylistDto: UpdatePlaylistDto): Promise<Playlists> {
-
-const {cancionId, ...updateFilelds} = updatePlaylistDto;
-
-    const playlist = await this.playlistRepository.findOne({
-   where: {playlistId},
-   relations: ['canciones']
-    });
-
-    if (!playlist) throw new NotFoundException(`La playlist con id${playlistId} no existe.`)
-
-      if (cancionId && cancionId.length > 0) {
-        const canciones = await this.cancionRepository
-          .createQueryBuilder('cancion')
-          .where('cancion.cancionId IN (:...ids)', { ids: cancionId })
-          .getMany();
-    
-        // Verificar si todas las canciones fueron encontradas
-        if (!canciones || canciones.length !== cancionId.length) {
-          throw new NotFoundException('Algunas de las canciones no se encontraron');
-        }
-    
-        // Asignar las nuevas canciones al favorito
-        playlist.canciones = canciones;
-      }
-
-      Object.assign(playlist, updateFilelds);
-
-    return this.playlistRepository.save(playlist);
-  }
-
   async deleteOnePlaylist(@Param('id') playlistId: number): Promise<any> {
     const playlist = await this.playlistRepository.findOne({
       where: { playlistId: playlistId }
@@ -138,4 +111,71 @@ const {cancionId, ...updateFilelds} = updatePlaylistDto;
     await this.playlistRepository.delete(playlistId);
     return { message: `Playlist ${playlist.title} deleted` }
   }
+
+  //agrega una cancion a la playlist
+  async addCancionToPlaylist(playlistId: number, cancionId: number, usuarioId: number): Promise<void> {
+    //  Busca al usuario en la base de datos
+    const usuario = await this.usuarioRepository.findOne({
+      where: { usuarioId }
+    });
+    if (!usuario) {
+      throw new Error('Usuario no encontrado');
+    }
+    // Busca la playlist con las relaciones necesarias
+    const playlist = await this.playlistRepository.findOne({
+      where: { playlistId },
+      relations: ['canciones']
+    });
+    if (!playlist) {
+      throw new NotFoundException(`La playlist con id: ${playlistId} no existe`);
+    }
+
+    // Busca la canción por su ID
+    const cancion = await this.cancionRepository.findOne({
+      where: { cancionId }
+    });
+    if (!cancion) {
+      throw new NotFoundException(`La canción con id: ${cancionId} no existe`);
+    }
+    // Evita duplicados al agregar
+    if (!playlist.canciones.some((c) => c.cancionId === cancionId)) {
+      playlist.canciones.push(cancion); // Agrega el objeto `Cancion` a la lista
+      await this.playlistRepository.save(playlist); // Guarda los cambios en la base de datos
+    }
+  }
+
+  //elimina una canción de la playlist
+  async removeCancionToPlaylist(playlistId: number, cancionId: number, usuarioId: number): Promise<void> {
+    // Busca al usuario en la base de datos
+    const usuario = await this.usuarioRepository.findOne({
+      where: { usuarioId }
+    });
+    if (!usuario) {
+      throw new Error('Usuario no encontrado');
+    }
+
+    // Busca la playlist con las relaciones necesarias
+    const playlist = await this.playlistRepository.findOne({
+      where: { playlistId },
+      relations: ['canciones']
+    });
+    if (!playlist) {
+      throw new NotFoundException(`La playlist con id: ${playlistId} no existe`);
+    }
+
+    // Verifica si la canción está en la playlist
+    const index = playlist.canciones.findIndex((c) => c.cancionId === cancionId);
+    if (index === -1) {
+      throw new NotFoundException(`La canción con id: ${cancionId} no está en la playlist con id: ${playlistId}`);
+    }
+
+    // Elimina la canción de la lista
+    playlist.canciones.splice(index, 1);
+
+    // Guarda los cambios en la base de datos
+    await this.playlistRepository.save(playlist);
+  }
+
+
+
 }
