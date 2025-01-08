@@ -51,8 +51,8 @@ export class AutenticacionService {
     });
     //si el email no coincide con el mail del usuario del dto, lanza una excepcion
     if (!usuario) throw new UnauthorizedException('Invalid Email or Password');
-    console.log('Contraseña proporcionada:', loginDto.contraseña);
-    console.log('Contraseña almacenada (hash):', usuario.contraseña);
+    //console.log('Contraseña proporcionada:', loginDto.contraseña);
+    //console.log('Contraseña almacenada (hash):', usuario.contraseña);
 
      //si el email coincide vamos a validar password
     const isAuthenticated = await this.hashService.comparePassword(
@@ -60,7 +60,8 @@ export class AutenticacionService {
       loginDto.contraseña,
       usuario.contraseña,
 
-    );console.log('Resultado de comparación:', isAuthenticated); // ¿Coinciden las contraseñas?
+    );
+    //console.log('Resultado de comparación:', isAuthenticated); // ¿Coinciden las contraseñas?
     //sino coincide la contraseña lanzamos excepcion
     if (!isAuthenticated)
       throw new UnauthorizedException('Invalid  Password');
